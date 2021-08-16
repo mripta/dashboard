@@ -63,6 +63,18 @@ return [
             ]) : [],
         ],
 
+        'mongodb' => [
+		    'driver'   => 'mongodb',
+		    'host'     => env('MG_HOST', 'localhost'),
+		    'port'     => env('MG_PORT', 27017),
+		    'database' => env('MG_DATABASE', 'mripta'),
+		    'username' => env('MG_USERNAME', 'admin'),
+		    'password' => env('MG_PASSWORD', 'admin'),
+		    'options' => [
+		        'database' => 'admin' // set the authentication database
+		    ]
+		],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
