@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'last_ip_address'
     ];
 
     /**
@@ -40,4 +40,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The teams that the User belong to
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class);
+    }
+
+    /**
+     * Returns if the user is admin
+     */
+    public function isAdmin()
+    {
+        return $this->admin;
+    }
 }
