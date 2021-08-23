@@ -14,11 +14,13 @@
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
-  <!-- Style -->
-  <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+  <!-- Style -->
+  <link rel="stylesheet" href="{{ asset('css/all.fontawesome.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}">
+
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
