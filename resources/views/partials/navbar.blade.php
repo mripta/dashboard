@@ -9,6 +9,10 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <img src="/img/profiles/{{ Auth::user()->image }}" alt="Profile Image" class="img-circle" width="40" height="40" style="opacity: .8">
+        </li>
+
         <!-- Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
