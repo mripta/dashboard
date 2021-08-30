@@ -48,20 +48,6 @@
                                     @endif
                                 </div>
 
-                                <div class="form-group{{ $errors->has('role_id') ? ' has-error' : '' }}">
-                                    <label for="role_id">Cargo</label>
-                                    <select class="form-control" id="role_id" name="role_id">
-                                    @if(count($roles)) 
-                                        @foreach($roles as $row)
-                                            <option value="{{$row->id}}" {{$row->id == $user->roles[0]->id ? 'selected="selected"' : ''}}>{{$row->name}}</option>
-                                        @endforeach 
-                                    @endif
-                                    </select>
-                                    @if ($errors->has('role_id'))
-                                        <p class="text-danger">{{ $errors->first('role_id') }}</p>
-                                    @endif
-                                </div>
-
                             </div>
                             <div class="card-footer">
                                 @csrf

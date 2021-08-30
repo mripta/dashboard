@@ -36,7 +36,7 @@
                                                     </a>
                                                     {{ Form::model($row, ['method' => 'delete', 'route' => ['user.destroy', $row->id], 'class'=>'btn btn-sm form-delete']) }}
                                                     {{ Form::hidden('id', $row->id) }}
-                                                    {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'name' => 'deleteUser', 'id' => 'D'.$row->id.'', 'tabindex'=>'0', 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
+                                                    {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'name' => 'deleteUser', 'id' => 'D'.$row->id, 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
                                                     {{ Form::close() }}
                                                 </td>
                                             </tr>
