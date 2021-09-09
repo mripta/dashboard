@@ -17,8 +17,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'bio',
         'email',
         'password',
+        'admin',
+        'image',
         'last_ip_address'
     ];
 
@@ -48,7 +51,7 @@ class User extends Authenticatable
      */
     public function teams()
     {
-        return $this->belongsToMany(Team::class);
+        return $this->belongsToMany(Team::class)->withPivot('owner');
     }
 
     /**
