@@ -19,8 +19,8 @@
                 {{ Auth::user()->name }} <i class="fas fa-angle-down"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a href="{{-- route('definicoes.index') --}}" class="dropdown-item">
-                    <i class="fas fa-key"></i> Modificar Palavra-Passe
+                <a href="{{ route('profile.definicoes') }}" class="dropdown-item {{ (Request::is('definicoes') ? 'active' : '') }}">
+                    <i class="fas fa-id-card"></i> Modificar Perfil
                 </a>
                 <div class="dropdown-divider"></div>
                 <a href="{{ route('logout') }}" class="dropdown-item"

@@ -20,10 +20,16 @@
   <!-- Style -->
   <link rel="stylesheet" href="{{ asset('css/all.fontawesome.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}">
-
+  <link rel="stylesheet" href="{{ asset('css/daterangepicker.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/select2-bootstrap4.min.css') }}">
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
+
+  <style>
+    .hide{display:none!important}
+  </style>
 </head>

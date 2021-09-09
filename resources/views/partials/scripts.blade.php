@@ -5,6 +5,7 @@
 <script src="{{ asset('js/chart.min.js') }}"></script>
 <script src="{{ asset('js/moment.min.js') }}"></script>
 <script src="{{ asset('js/daterangepicker.js') }}"></script>
+<script src="{{ asset('js/select2.full.min.js') }}"></script>
 
 <script>
 // select light or dar theme on OS settings
