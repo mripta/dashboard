@@ -46,7 +46,7 @@
                                     {{-- iterate ref --}}
                                     @foreach ($data as $line) 
                                     <tr>
-                                        <td>{{ ++$i }}</td>
+                                        <td>{{$loop->iteration}}</td>
                                         <td>{{ $line->ref }}</td>
                                         <td>{{ $line->payload }}</td>
                                         <td>{{ $line->timestamp }}</td>

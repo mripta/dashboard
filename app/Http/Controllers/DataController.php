@@ -51,8 +51,7 @@ class DataController extends Controller
         $params = [
             'title' => 'Dados Formatados',
             'data' => $data,
-            'teamname' => $team[0]->name,
-            'i' => 0
+            'teamname' => $team[0]->name
         ];
 
         return view('dashboard.table', $params);
@@ -88,8 +87,7 @@ class DataController extends Controller
         $params = [
             'title' => 'Dados RAW',
             'data' => $data,
-            'teamname' => $team[0]->name,
-            'i' => 0
+            'teamname' => $team[0]->name
         ];
 
         return view('dashboard.raw', $params);
