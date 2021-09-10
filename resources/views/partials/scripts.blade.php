@@ -6,8 +6,11 @@
 <script src="{{ asset('js/moment.min.js') }}"></script>
 <script src="{{ asset('js/daterangepicker.js') }}"></script>
 <script src="{{ asset('js/select2.full.min.js') }}"></script>
+<script src="{{ asset('js/pdfmake.min.js') }}"></script>
+<script src="{{ asset('js/vfs_fonts.js') }}"></script>
+<script src="{{ asset('js/datatables.min.js') }}"></script>
 
-<script>
+<script type="text/javascript">
 // select light or dar theme on OS settings
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     $('body').addClass("dark-mode");
@@ -15,6 +18,5 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
     $('.wrapper').find(".navbar").removeClass("navbar-white");
     $('.wrapper').find(".navbar").addClass("navbar-dark");
 }
-</script>
-
 @yield('scripts')
+</script>
