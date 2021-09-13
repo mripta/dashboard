@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\Invite;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+
+use App\Http\Requests\StoreInviteRequest;
 
 class RegisterController extends Controller
 {
@@ -51,7 +55,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'exists:invites'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -64,14 +68,44 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $invite = Invite::where('email', $data['email'])->firstOrFail();
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $invite->registered_at = $user->created_at;
+        $invite->save();
+
+        return $user;
     }
 
-    public function requestInvitation() {
+    // Returns the request invite public view
+    public function inviteRequest() {
         return view('auth.request');
+    }
+
+    // save the public invite request in the db
+    public function inviteStore(StoreInviteRequest $request)
+    {
+        $invite = new Invite($request->all());
+        //$invite->generateInviteToken();
+        $invite->timestamps = false;
+        $invite->save();
+
+        return redirect()->route('login')
+            ->with('success', 'Pedido de registo enviado com sucesso.');
+    }
+
+    // shows the registration form and send the email var
+    public function inviteRegisterForm(Request $request)
+    {
+        $token = $request->get('token');
+        $invite = Invite::where('token', $token)->firstOrFail();
+        $email = $invite->email;
+
+        return view('auth.register', compact('email'));
     }
 }

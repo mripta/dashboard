@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Validator;
 use App\Models\User;
+use App\Models\Invite;
 use Illuminate\Http\Request;
+use App\Notifications\InviteNotification;
+use App\Http\Requests\StoreInviteRequest;
+use Illuminate\Support\Facades\Notification;
 
 class UserController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Create a new controller instance that requires authentication
      *
      * @return void
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('admin');
     }
 
     /**
@@ -61,7 +66,7 @@ class UserController extends Controller
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
-            'last_ip_address' => '127.0.0.1' //$request->ip(),
+            'last_ip_address' => '127.0.0.1'
         ]);
 
         return redirect()->route('users.index')->with('success', "Utilizador adicionado com sucesso");
@@ -127,6 +132,79 @@ class UserController extends Controller
             if ($ex instanceof ModelNotFoundException)
             {
                 return redirect()->route('users.index')->with('error', "Não foi possível encontrar o utilizador especificado");
+            }
+        }
+    }
+
+    // returns the Invite User view in the admin dashboard
+    public function showInvites()
+    {
+        // pedidos de convite -> quando created_at é null
+        $requests = Invite::where('created_at', null)->get();
+        // convites pendentes -> quando o user nao se encontra registado -> registered_at = null
+        $pinvites = Invite::where('registered_at', null)->where('created_at', '<>', null)->orderBy('created_at', 'desc')->get();
+        // convites utilizados -> registo completo -> registered_at <> null
+        $uinvites = Invite::where('registered_at', '<>', null)->orderBy('created_at', 'desc')->get();
+
+        $params=[
+            'title' => 'Convites',
+            'requests' => $requests,
+            'pinvites' => $pinvites,
+            'uinvites' => $uinvites,
+        ];
+        return view('users.invite')->with($params);
+    }
+
+    // admin delete invite
+    public function inviteDestroy($id)
+    {
+        try
+        {
+            $invite = Invite::findOrFail($id);
+            $invite->delete();
+            return redirect()->route('admin.invites')->with('success', "Convite eliminado com sucesso");
+        }
+        catch (ModelNotFoundException $ex)
+        {
+            if ($ex instanceof ModelNotFoundException)
+            {
+                return redirect()->route('admin.invites')->with('error', "Não foi possível encontrar o convite especificado");
+            }
+        }
+    }
+
+    // creates the invite and sends the email notification from the admin dashboard
+    public function inviteCreate(StoreInviteRequest $request)
+    {
+        $invite = new Invite($request->all());
+        $invite->generateInviteToken();
+        $invite->save();
+
+        Notification::route('mail', $request->input('email'))->notify(new InviteNotification($invite->getLink()));
+
+        return redirect()->route('admin.invites')->with('success', 'Convite enviado com sucesso.');
+    }
+
+    // Invites gets aproved by the admin
+    // sends the mail notification to the user and adds the created_at field
+    public function inviteNotify($id)
+    {
+        try
+        {
+            $invite = Invite::where('id', $id)->where('created_at', null)->firstOrFail();
+            $invite->generateInviteToken();
+            $invite->update(['created_at' => now()]);
+            $invite->save();
+
+            Notification::route('mail', $invite['email'])->notify(new InviteNotification($invite->getLink()));
+
+            return redirect()->route('admin.invites')->with('success', "Convite enviado com sucesso");
+        }
+        catch (ModelNotFoundException $ex)
+        {
+            if ($ex instanceof ModelNotFoundException)
+            {
+                return redirect()->route('admin.invites')->with('error', "Não foi possível encontrar o convite especificado");
             }
         }
     }
