@@ -17,6 +17,7 @@
                                         <th>ID</th>
                                         <th>Nome</th>
                                         <th>E-mail</th>
+                                        <th># Equipas</th>
                                         <th>Admin</th>
                                         <th>Opções</th>
                                     </tr>
@@ -25,10 +26,17 @@
                                     @if(count($users))
                                         @foreach ($users as $row)
                                             <tr>
-                                                <td>{{$row->id}}</td>
+                                                <td>{{$loop->iteration}}</td>
                                                 <td>{{$row->name}}</td>
                                                 <td>{{$row->email}}</td>
-                                                <td>{{$row->admin}}</td>
+                                                <td>{{ count($row->teams) }} </td>
+                                                <td>
+                                                @if($row->admin)
+                                                    <span class="badge badge-success">Sim</span> 
+                                                @else
+                                                    <span class="badge badge-danger">Não</span> 
+                                                @endif
+                                                </td>
                                                 <td>
                                                     <a href="{{ route('user.edit', $row->id) }}" id="{{$row->id}}" class="btn btn-sm btn-info"
                                                        tabindex="0" data-toggle="tooltip" title="Editar">
@@ -77,17 +85,15 @@
 @endsection
 
 @section('scripts')
-<script>
-  $(function () {
-      $('[data-toggle="tooltip"]').tooltip({placement: 'bottom'})
-    })
-    $('table[data-form="deleteForm"]').on('click', '.form-delete', function(e){
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip({placement: 'bottom'})
+})
+$('table[data-form="deleteForm"]').on('click', '.form-delete', function(e){
     e.preventDefault();
     var $form=$(this);
     $('#confirm').modal({ backdrop: 'static', keyboard: false })
-        .on('click', '#delete-btn', function(){
-            $form.submit();
-        });
+    .on('click', '#delete-btn', function(){
+        $form.submit();
     });
-</script>
+});
 @endsection

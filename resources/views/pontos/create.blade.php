@@ -31,9 +31,10 @@
                             </div>
                             <hr>
                             <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
-                                <label for="username">Username <small>(para login e envio de dados no broker)</small></label>
+                                <label for="username">Username </label>
                                 <input type="username" class="form-control" id="username" name="username"
                                        placeholder="Username do Ponto de Recolha" value="{{ Request::old('username') ?: '' }}">
+                                       <small id="emailHelp" class="form-text text-muted">Estes dados serão utilizados para autenticação e envio de dados para o broker.</small>
                                 @if ($errors->has('username'))
                                     <p class="text-danger">{{ $errors->first('username') }}</p>
                                 @endif
@@ -113,7 +114,6 @@
 @endsection
 
 @section('scripts')
-<script type="text/javascript">
 $(document).ready(function() {
     // clone the ref texbox
     $("#add").click(function(){ 
@@ -133,5 +133,4 @@ $(document).ready(function() {
       theme: 'dark-adminlte'
     })
 });
-</script>
 @endsection
