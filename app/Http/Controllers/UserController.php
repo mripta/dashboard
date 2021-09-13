@@ -139,11 +139,11 @@ class UserController extends Controller
     // returns the Invite User view in the admin dashboard
     public function showInvites()
     {
-        // pedidos de convite -> quando created_at é null
-        $requests = Invite::where('created_at', null)->get();
-        // convites pendentes -> quando o user nao se encontra registado -> registered_at = null
-        $pinvites = Invite::where('registered_at', null)->where('created_at', '<>', null)->orderBy('created_at', 'desc')->get();
-        // convites utilizados -> registo completo -> registered_at <> null
+        // pedidos de convite -> quando o token é null
+        $requests = Invite::where('token', null)->get();
+        // convites pendentes -> quando o user nao se encontra registado -> quando o registered_at é null
+        $pinvites = Invite::where('registered_at', null)->where('token', '<>', null)->orderBy('created_at', 'desc')->get();
+        // convites utilizados -> registo completo -> quando o registered_at é diferente de  null
         $uinvites = Invite::where('registered_at', '<>', null)->orderBy('created_at', 'desc')->get();
 
         $params=[
@@ -191,9 +191,8 @@ class UserController extends Controller
     {
         try
         {
-            $invite = Invite::where('id', $id)->where('created_at', null)->firstOrFail();
+            $invite = Invite::where('id', $id)->where('token', null)->firstOrFail();
             $invite->generateInviteToken();
-            $invite->update(['created_at' => now()]);
             $invite->save();
 
             Notification::route('mail', $invite['email'])->notify(new InviteNotification($invite->getLink()));

@@ -76,7 +76,8 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $invite->registered_at = $user->created_at;
+        $invite->registered_at = now();
+        $invite->timestamps = false;
         $invite->save();
 
         return $user;
@@ -88,11 +89,10 @@ class RegisterController extends Controller
     }
 
     // save the public invite request in the db
+    // does NOT generate the token
     public function inviteStore(StoreInviteRequest $request)
     {
         $invite = new Invite($request->all());
-        //$invite->generateInviteToken();
-        $invite->timestamps = false;
         $invite->save();
 
         return redirect()->route('login')

@@ -95,7 +95,7 @@
                                         <tr>
                                             <td>{{ $loop->index +1 }}</td>
                                             <td>{{ $pinvite->email }}</td>
-                                            <td>{{ $pinvite->created_at }}</td>
+                                            <td>{{ date('d/m/Y H:i:s', strtotime($pinvite->created_at)) }}</td>
                                             <td>
                                                 <kbd>{{ $pinvite->getLink() }}</kbd>
                                             </td>
@@ -118,17 +118,18 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fas fa-list-ol"></i> Lista de Convites Utilizados</h3>
+                            <h3 class="card-title"><i class="fas fa-list-ol"></i> Lista de Convites Aceites</h3>
                         </div>
                         <div class="card-body">
                             @if (!empty($uinvites))
-                            <table class="table table-responsive table-striped" style="margin-bottom: 0">
+                            <table class="table table-striped" style="margin-bottom: 0">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>E-mail</th>
                                         <th>Data de Criação</th>
                                         <th>Data de Aceitação</th>
+                                        <th>Data de Registo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -136,8 +137,9 @@
                                         <tr>
                                             <td>{{ $loop->index +1 }}</td>
                                             <td>{{ $uinvite->email }}</td>
-                                            <td>{{ date('d-m-Y H:m:s', strtotime($uinvite->created_at)) }}</td>
-                                            <td>{{ date('d-m-Y H:m:s', strtotime($uinvite->registered_at)) }}</td>
+                                            <td>{{ date('d/m/Y H:i:s', strtotime($uinvite->created_at)) }}</td>
+                                            <td>{{ date('d/m/Y H:i:s', strtotime($uinvite->updated_at)) }}</td>
+                                            <td>{{ date('d/m/Y H:i:s', strtotime($uinvite->registered_at)) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
