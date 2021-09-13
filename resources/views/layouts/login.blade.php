@@ -1,6 +1,7 @@
 @include('partials.header')
 
 <body class="hold-transition login-page">
+    @include('partials.alerts')
     <div class="login-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">

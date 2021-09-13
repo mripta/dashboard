@@ -49,6 +49,6 @@
             <a href="{{ route('password.request') }}">Recuperar palavra-Passe</a>
         </p>
         <p class="mb-1">
-            <a href="{{ route('request') }}">Efetuar pedido de Registo</a>
+            <a href="{{ route('invite.request') }}">Efetuar pedido de Registo</a>
         </p>
 @endsection

@@ -1,7 +1,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ route('dashboard.home') }}" class="brand-link">
+    <a href="{{ route('home') }}" class="brand-link">
         <img src="/img/logo/mripta-128.png" alt="MRIPTA" class="brand-image img-circle elevation-3"
              style="opacity: .8">
         <span class="brand-text font-weight-light">MRIPTA</span>
@@ -12,7 +12,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
-                    <a href="{{ route('dashboard.home') }}" class="nav-link {{ (Request::is('/') ? 'active' : '') }}">
+                    <a href="{{ route('home') }}" class="nav-link {{ (Request::is('/') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -54,7 +54,7 @@
                 <li class="nav-header">Administração</li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link {{ (Request::is('invite') ? 'active' : '') }}">
+                    <a href="{{ route('admin.invites') }}" class="nav-link {{ (Request::is('admin/invite') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-user-plus"></i>
                         <p>Convidar Utilizador</p>
                     </a>
