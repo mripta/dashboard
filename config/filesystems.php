@@ -30,6 +30,11 @@ return [
 
     'disks' => [
 
+        'avatar' => [
+            'driver' => 'local',
+            'root' => public_path() . '/img/profiles',
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

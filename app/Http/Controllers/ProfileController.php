@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Auth;
 class ProfileController extends Controller
 {
     /**
@@ -26,7 +26,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $user = User::find(auth()->user()->id);
+        $user = Auth::user();
         $params = [
             'title' => 'Modificar Perfil',
             'user' => $user
@@ -53,6 +53,49 @@ class ProfileController extends Controller
         $params = [
             'title' => 'Modificar Perfil',
             'success' => 'Palavra-passe modificada com sucesso'
+        ];
+
+        return redirect()->route('profile.definicoes')->with($params);
+    }
+
+    /**
+     * Update the user profile
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function profileUpdate(Request $request)
+    {
+        $user = Auth::user();
+
+        if($request->hasFile('avatar')){
+            $request->validate([
+                'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            // generate new filename
+            $filename = Auth()->user()->id.substr(md5(rand(0, 9) . time()), 0, 10).'.'.request()->avatar->getClientOriginalExtension();
+            // save file in avatar storage (defined in the filesystems.php)
+            $request->avatar->storeAs('/', $filename, 'avatar');
+            // updated db
+            $user->image = $filename;
+            $user->save();
+        }
+
+        $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'bio' => 'nullable|string|min:5|max:255',
+            'email' => 'required|string|email|max:100|unique:users,email,'.$user->id,
+        ]);
+
+        $user->name = $request->name;
+        $user->bio = $request->bio;
+        $user->email = $request->email;
+        $user->save();
+
+        $params = [
+            'title' => 'Modificar Perfil',
+            'success' => 'Perfil modificado com sucesso'
         ];
 
         return redirect()->route('profile.definicoes')->with($params);

@@ -17,14 +17,15 @@
                         <form method="post" role="form" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label for="name">Avatar</label><br>
+                                    <label for="avatar">Avatar</label><br>
                                     <img class="image rounded-circle" src="{{asset('/img/profiles/'.Auth::user()->image)}}" alt="avatar" style="width: 80px;height: 80px; padding: 10px; margin: 0px; ">
-                                    <input type="file" name="avatar" id="avatar" accept="image/png, image/jpeg">
+                                    <input type="file" name="avatar" id="avatar" accept="image/png, image/jpeg" aria-describedby="fileHelp">
+                                    <small id="fileHelp" class="form-text text-muted">O ficheiro deve ser uma imagem válida do tipo jpeg, jpg ou png menor que 2MB.</small>
                                 </div>
                                 <div class="form-group">
                                     <label for="name">Nome</label>
                                     <input type="text" value="{{ old('name') ?: $user->name }}" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="name"
-                                           name="name" placeholder="Preencher Nome">
+                                           name="name" placeholder="Preencher Nome" required>
                                     @if ($errors->has('name'))
                                         <p class="text-danger">{{ $errors->first('name') }}</p>
                                     @endif
@@ -40,7 +41,7 @@
                                 <div class="form-group">
                                     <label for="name">E-mail</label>
                                     <input type="email" value="{{ old('email') ?: $user->email }}" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" id="email"
-                                           name="email" placeholder="Preencher E-mail">
+                                           name="email" placeholder="Preencher E-mail" required>
                                     @if ($errors->has('email'))
                                         <p class="text-danger">{{ $errors->first('email') }}</p>
                                     @endif
@@ -59,7 +60,7 @@
                 <div class="col-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fas fa-key"></i> Atualizar Password</h3>
+                            <h3 class="card-title"><i class="fas fa-key"></i> Atualizar Palavra-Passe</h3>
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
