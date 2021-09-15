@@ -115,11 +115,15 @@ var colorsBackground = [
     'rgba(215, 181, 166, 0.4)'
 ];
 
-var labels = varph.ph.map(function (e) {
-    return e.time;
-});
 @foreach ($dataset as $key => $ref)
 @foreach ($ref as $param)
+{{-- get the time to the labels on the first iteration --}}
+@if ($loop->parent->first && $loop->first)
+var labels = var{{$key}}.{{$key}}.map(function (e) {
+    return e.time;
+});
+@endif
+
 var {{$key.$param}} = var{{$key}}.{{$key}}.map(function (e) {
     return e.{{$param}};
 });
@@ -150,7 +154,7 @@ var lineChart = new Chart(CHART, {
         responsive: true,
         title: {
             display: true,
-            text: 'PH Sensor'
+            text: '{{ $teamname }}'
         },
         scales: {
             xAxes: [{

@@ -29,14 +29,14 @@
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('pontos.create') }}" class="nav-link {{ (Request::is('pontos/create') ? 'active' : '') }}">
-                                <i class="fas fa-plus-square nav-icon"></i>
-                                <p>Criar Ponto</p>
+                                <i class="far fa-plus-square nav-icon"></i>
+                                <p>Criar Ponto de Recolha</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('pontos.index') }}" class="nav-link {{ (Request::is('pontos') ? 'active' : '') }}">
                                 <i class="fas fa-list nav-icon"></i>
-                                <p>Listar Pontos</p>
+                                <p>Listar Pontos de Recolha</p>
                             </a>
                         </li>
                         @foreach(Auth::user()->teams as $team)
@@ -56,53 +56,22 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.invites') }}" class="nav-link {{ (Request::is('admin/invite') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-user-plus"></i>
-                        <p>Convidar Utilizador</p>
+                        <p>Gerir Convites</p>
                     </a>
                 </li>
 
-                <li class="nav-item has-treeview {{ (Request::is('admin/user*') ? 'menu-open' : '') }}">
-                    <a href="#" class="nav-link {{ (Request::is('admin/user*') ? 'active' : '') }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Utilizadores <i class="fas fa-angle-left right"></i></p>
+                <li class="nav-item">
+                    <a href="{{ route('user.index') }}" class="nav-link {{ (Request::is('admin/user*') ? 'active' : '') }}">
+                        <i class="nav-icon fas fa-user-cog"></i>
+                        <p>Gerir Utilizadores</p>
                     </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('user.index') }}"
-                               class="nav-link {{ (Request::is('admin/user') ? 'active' : '') }}">
-                                <i class="fas fa-list nav-icon"></i>
-                                <p>Listar Utilizadores</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('user.create') }}"
-                               class="nav-link {{ (Request::is('admin/user/create') ? 'active' : '') }}">
-                                <i class="fas fa-user-plus nav-icon"></i>
-                                <p>Adicionar Utilizador</p>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
-                <li class="nav-item has-treeview {{ (Request::is('admin/team*') ? 'menu-open' : '') }}">
-                    <a href="#" class="nav-link {{ (Request::is('admin/team*') ? 'active' : '') }}">
-                        <i class="nav-icon fas fa-user-tag"></i>
-                        <p>Equipas <i class="fas fa-angle-left right"></i></p>
+
+                <li class="nav-item">
+                    <a href="{{ route('team.index') }}" class="nav-link {{ (Request::is('admin/team*') ? 'active' : '') }}">
+                        <i class="nav-icon fas fa-satellite-dish"></i>
+                        <p>Gerir Pontos de Recolha</p>
                     </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('team.index') }}"
-                               class="nav-link {{ (Request::is('admin/team') ? 'active' : '') }}">
-                                <i class="fas fa-list nav-icon"></i>
-                                <p>Listar Equipas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('team.create') }}"
-                               class="nav-link {{ (Request::is('admin/cargos/create') ? 'active' : '') }}">
-                                <i class="fas fa-plus nav-icon"></i>
-                                <p>Adicionar Equipa</p>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 @endif
             </ul>

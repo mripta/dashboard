@@ -39,15 +39,15 @@
                                                 <td>
                                                     <a href="/pontos/{{$row->id}}">{{$row->name}}</a>
                                                     <br/>
-                                                    <small>
-                                                        Criado a {{ date('d-m-Y', strtotime($row->created_at)) }}
-                                                    </small>
+                                                    <small>{{$row->description}}</small>
+                                                    <br/>
+                                                    <small>Criado a {{ date('d-m-Y', strtotime($row->created_at)) }}</small>
                                                 </td>
                                                 <td>
                                                     <ul class="list-inline">
                                                         @foreach ($row->users as $user)
                                                             <li class="list-inline-item">
-                                                                <img alt="Perfil {{$user->name}}" class="table-avatar" data-toggle="tooltip" title="{{$user->name}}" src="/img/profiles/{{$user->image}}">
+                                                                <img alt="Perfil {{$user->name}}" class="table-avatar @if($user->pivot->owner) border border-danger @endif" data-toggle="tooltip" title="{{$user->name}}" src="/img/profiles/{{$user->image}}">
                                                             </li>
                                                         @endforeach
                                                     </ul>

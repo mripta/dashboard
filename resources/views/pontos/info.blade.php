@@ -21,8 +21,8 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-success">
                     <div class="inner">
-                        <h3>{{$data}}</h3>
-                        <p>@if ($data == 1) Mensagem @else Mensagens @endif</p>
+                        <h3>{{$datac}}</h3>
+                        <p>@if ($datac == 1) Mensagem @else Mensagens @endif</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-envelope-open"></i>
@@ -43,8 +43,8 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-danger">
                     <div class="inner">
-                        <h3>{{$params}}</h3>
-                        <p>@if ($params == 1) Parâmetro @else Parâmetros @endif</p>
+                        <h3>{{$paramc}}</h3>
+                        <p>@if ($paramc == 1) Parâmetro @else Parâmetros @endif</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-chart-bar"></i>
@@ -100,41 +100,10 @@
                             <li>
                                 <img src="/img/profiles/{{$user->image}}" class="rounded" width="100" height="100" alt="Avatar {{$user->name}}">
                                 <p class="users-list-name">{{$user->name}}</p>
-                                <!--span class="users-list-date">Desc</span-->
+                                @if($user->bio) <span class="users-list-date">{{ $user->bio }}</span> @endif
                             </li>
                             @endforeach
                         </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card card-primary card-outline">
-                    <div class="card-header">
-                        <h3 class="card-title">Referências e Parametros</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                    @foreach($dataset as $key => $linha)
-                        {{-- ref --}}
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="form-group">
-                                    <label for="ref">Ref</label>
-                                    <input type="text" class="form-control" id="ref" disabled value="{{$key}}">
-                                </div>
-                            </div>
-                            @foreach($linha as $ref)
-                            <div class="col-sm">
-                                <div class="form-group">
-                                    <label for="param">Param</label>
-                                    <input type="text" class="form-control" id="param" disabled value="{{$ref}}">
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @endforeach
                     </div>
                 </div>
             </div>
@@ -167,6 +136,77 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Referências</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                    @foreach($dataset as $key => $linha)
+                        {{-- ref --}}
+                        <div class="row">
+                            <div class="input-group">
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    <label for="ref">Referência</label>
+                                    <input type="text" class="form-control" id="ref" disabled value="{{$key}}">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Gerir</label>
+                                    <a href="{{ route('params.edit', [$refs[$loop->index]->id]) }}" class="btn btn-primary btn-block"><i class="fas fa-wrench"></i> Gerir</a>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Parâmetros</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                    @foreach($dataset as $key => $linha)
+                        {{-- ref --}}
+                        <div class="row">
+                            <div class="input-group">
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    <label for="ref">Referência</label>
+                                    <input type="text" class="form-control" id="ref" disabled value="{{$key}}">
+                                </div>
+                            </div>
+                            @foreach($linha as $ref)
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    <label for="param">Parâmetro</label>
+                                    <input type="text" class="form-control" id="param" disabled value="{{$ref}}">
+                                </div>
+                            </div>
+                            @endforeach
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Gerir</label>
+                                    <a href="{{ route('params.edit', [$refs[$loop->index]->id]) }}" class="btn btn-primary btn-block"><i class="fas fa-wrench"></i> Gerir</a>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>
 @endsection
