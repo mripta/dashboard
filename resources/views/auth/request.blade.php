@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="card-body register-card-body">
-        <p class="login-box-msg">Efetuar pedido de Registo</p>
+        <p class="login-box-msg">Efetuar Pedido de Registo</p>
         <form action="{{ route('invite.store') }}" method="POST">
             @csrf
             <div class="input-group form-group mb-3">
@@ -20,12 +20,14 @@
                 @enderror
             </div>
             <div class="row">
-                <div class="col-6">
-                    <button type="submit" class="btn btn-primary btn-block">Enviar Pedido</button>
-                </div>
-                <div class="col-6">
-                    <a href="{{ route('login') }}">Iniciar Sessão</a>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary btn-block">Enviar Pedido de Registo</button>
                 </div>
             </div>
         </form>
+        <p class="mt-3 mb-1">
+            <a href="{{ route('login') }}">Iniciar Sessão</a>
+        </p>
+    </div>
+        
 @endsection

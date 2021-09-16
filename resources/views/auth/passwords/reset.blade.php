@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="card-body login-card-body">
-        <p class="login-box-msg">{{ __('Reset Password') }}</p>
+        <p class="login-box-msg">Alterar Palavra-Passe</p>
         <form method="POST" action="{{ route('password.update') }}">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">

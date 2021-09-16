@@ -50,7 +50,7 @@
                             {{-- remove the ref --}}
                             @if (!$loop->first)
                             <tr>
-                              <td>{{$loop->iteration}}</td>
+                              <td>{{ $j++ }}</td>
                               <td>{{ $linha->ref }}</td>
                               <td>{{ $key }}</td>
                               <td>{{ $param }}</td>
