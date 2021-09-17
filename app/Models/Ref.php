@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ref extends Model
 {
-    protected $fillable = ['ref', 'name'];
+    protected $fillable = ['ref', 'name', 'team_id'];
 
     /**
      * Get the team that owns the Ref

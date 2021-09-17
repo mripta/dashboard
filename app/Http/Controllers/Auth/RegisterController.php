@@ -76,6 +76,8 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        $user->markEmailAsVerified();
+
         $invite->registered_at = now();
         $invite->timestamps = false;
         $invite->save();

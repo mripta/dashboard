@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class ProfileController extends Controller
 {
     /**
@@ -88,9 +89,15 @@ class ProfileController extends Controller
             'email' => 'required|string|email|max:100|unique:users,email,'.$user->id,
         ]);
 
+        if($request->email != $user->email)
+        {
+            $user->email = $request->email;
+            $user->email_verified_at = null;
+            $user->sendEmailVerificationNotification();
+        }
+
         $user->name = $request->name;
         $user->bio = $request->bio;
-        $user->email = $request->email;
         $user->save();
 
         $params = [

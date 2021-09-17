@@ -40,5 +40,4 @@ class Team extends Model
     {
         return $this->hasMany(Ref::class);
     }
-
 }
