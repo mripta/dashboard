@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Team;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -61,5 +62,15 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->admin;
+    }
+
+    public function isOwner(Team $team)
+    {
+        foreach($team->owners as $owner)
+        {
+            if($this->id == $owner->id)
+                return true;
+        }
+        return false;
     }
 }
