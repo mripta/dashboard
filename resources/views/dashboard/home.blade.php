@@ -29,7 +29,7 @@
                         <div class="icon">
                             <i class="fas fa-user-plus"></i>
                         </div>
-                        @if (Auth::user()->isAdmin())<a href="{{ route('admin.invites') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
+                        @if (Auth::user()->isAdmin())<a href="{{ route('invite.show') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@
                         <div class="icon">
                             <i class="fas fa-envelope"></i>
                         </div>
-                        @if (Auth::user()->isAdmin())<a href="{{ route('admin.invites') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
+                        @if (Auth::user()->isAdmin())<a href="{{ route('invite.show') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
                     </div>
                 </div>
 
@@ -55,7 +55,7 @@
                         <div class="icon">
                             <i class="fas fa-envelope-open"></i>
                         </div>
-                        @if (Auth::user()->isAdmin())<a href="{{ route('admin.invites') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
+                        @if (Auth::user()->isAdmin())<a href="{{ route('invite.show') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
                     </div>
                 </div>
 
