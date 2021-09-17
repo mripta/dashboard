@@ -183,6 +183,88 @@ class PontoController extends Controller
         }
     }
 
+    // returns edit view
+    public function edit($teamid)
+    {
+        // force teamid to int
+        $teamid = intval($teamid);
+
+        // get the ref
+        $team = team::findOrFail($teamid);
+
+        // if the user is not admin of the team
+        if (!Auth::user()->isOwner($team))
+        {
+            return redirect()->route('pontos.index')->with('error', "Não tem acesso para editar este recurso");
+        }
+
+        // get all users
+        $users = User::where('id', '<>', auth()->user()->id)->get();
+
+        $params = [
+            'title' => "Editar Ponto de Recolha - ".$team->name,
+            'team' => $team,
+            'users' => $users
+        ];
+
+        return view('pontos.edit')->with($params);
+    }
+
+    public function patch($teamid, Request $request)
+    {
+        // force teamid to int
+        $teamid = intval($teamid);
+
+        // get the ref
+        $team = team::findOrFail($teamid);
+
+        // if the user is not admin of the team
+        if (!Auth::user()->isOwner($team))
+        {
+            return redirect()->route('pontos.index')->with('error', "Não tem acesso para editar este recurso");
+        }
+
+        $this->validate($request, [
+            'name' => 'required|string|max:50',
+            'desc' => 'required|string|max:100',
+            'username' => 'required|string|max:10|unique:teams,username,'.$team->id,
+            'users' => 'array'
+        ]);
+
+        if (!is_null($request->input('password')))
+        {
+            $this->validate($request, [
+                'password' => 'required|string|min:6|confirmed'
+            ]);
+            $team->password = bcrypt($request->input('password'));
+        }
+
+        $team->name = $request->input('name');
+        $team->description = $request->input('desc');
+        $team->username = $request->input('username');
+
+        $team->save();
+
+        // remove all the users
+        $team->users()->detach();
+
+        // add the auth user to the team with ownership
+        $team->users()->attach(auth()->user()->id, ['owner' => 1]);
+
+        // iterate users list, check if the users exists :)
+        // and add them to the team
+        if (!is_null($request->input('users')))
+        {
+            foreach($request->input('users') as $user)
+            {
+                if (User::where('id', $user)->count() == 1)
+                    $team->users()->attach($user);
+            }
+        }
+
+        return redirect()->route('pontos.index')->with('success', "Ponto de Recolha editado com sucesso");
+    }
+
     // ============================== PARAMS ==============================
 
     /**
