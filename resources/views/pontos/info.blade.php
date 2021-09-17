@@ -144,26 +144,45 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                    @foreach($dataset as $key => $linha)
-                        {{-- ref --}}
-                        <div class="row">
-                            <div class="input-group">
-                            <div class="col-sm">
-                                <div class="form-group">
-                                    <label for="ref">Referência</label>
-                                    <input type="text" class="form-control" id="ref" disabled value="{{$key}}">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label>Gerir</label>
-                                    <a href="{{ route('params.edit', [$refs[$loop->index]->id]) }}" class="btn btn-primary btn-block"><i class="fas fa-wrench"></i> Gerir</a>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                    @endforeach
+                        @if (!empty($dataset))
+                        <table class="table table-striped" style="margin-bottom: 0" data-form="deleteForm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Referência</th>
+                                    <th>Opções</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($dataset as $key => $linha)
+                                    <tr>
+                                        <td>{{ $loop->index +1 }}</td>
+                                        <td>{{ $key }}</td>
+                                        <td>
+                                            @if(Auth::user()->isOwner($team))
+                                            <a href="{{ route('refs.edit', [$team->id, $key]) }}" class="btn btn-sm btn-info" tabindex="0" data-toggle="tooltip" title="Editar">
+                                                <i class="far fa-edit"></i>
+                                            </a>
+
+                                            {{ Form::model($linha, ['method' => 'delete', 'route' => ['refs.destroy', $key], 'class'=>'btn btn-sm form-delete']) }}
+                                            {{ Form::hidden('teamid', $team->id) }}
+                                            {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
+                                            {{ Form::close() }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        @else
+                            <p>Não existem referências</p>
+                        @endif
                     </div>
+                    @if(Auth::user()->isOwner($team))
+                    <div class="card-footer">
+                        <a href="{{route('refs.create', $team->id)}}" class="btn btn-primary">Adicionar Referência</a>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -173,40 +192,90 @@
                     <div class="card-header">
                         <h3 class="card-title">Parâmetros</h3>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body">
-                    @foreach($dataset as $key => $linha)
-                        {{-- ref --}}
-                        <div class="row">
-                            <div class="input-group">
-                            <div class="col-sm">
-                                <div class="form-group">
-                                    <label for="ref">Referência</label>
-                                    <input type="text" class="form-control" id="ref" disabled value="{{$key}}">
-                                </div>
-                            </div>
-                            @foreach($linha as $ref)
-                            <div class="col-sm">
-                                <div class="form-group">
-                                    <label for="param">Parâmetro</label>
-                                    <input type="text" class="form-control" id="param" disabled value="{{$ref}}">
-                                </div>
-                            </div>
-                            @endforeach
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label>Gerir</label>
-                                    <a href="{{ route('params.edit', [$refs[$loop->index]->id]) }}" class="btn btn-primary btn-block"><i class="fas fa-wrench"></i> Gerir</a>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                    @endforeach
+                        @if (!empty($dataset))
+                        <table class="table table-striped" style="margin-bottom: 0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Referência</th>
+                                    @for ($i = 1; $i < $parammax+1; $i++)
+                                    <th>Parâmetro {{ $i }}</th>
+                                    @endfor
+                                    <th>Opções</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($dataset as $key => $linha)
+                                    <tr>
+                                        <td>{{ $loop->index +1 }}</td>
+                                        <td>{{ $key }}</td>
+                                        {{-- iterate refs --}}
+                                        @foreach($linha as $ref)
+                                        <td> {{$ref}} </td>
+                                        @endforeach
+                                        {{-- if the total number of params < number of line params --}}
+                                        @if (count($linha) < $parammax)
+                                        {{-- add empty columns --}}
+                                        @for ($i = 0; $i < $parammax-count($linha); $i++)
+                                        <td></td>
+                                        @endfor
+                                        @endif
+                                        <td>
+                                            @if(Auth::user()->isOwner($team))
+                                            <a href="{{ route('params.edit', [$refs[$loop->index]->id]) }}" class="btn btn-sm btn-info" tabindex="0" data-toggle="tooltip" title="Gerir">
+                                                <i class="fas fa-wrench"></i>
+                                            </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        @else
+                            <p>Não existem parâmetros</p>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-        
     </div>
 </div>
+@endsection
+
+@section('modal')
+<!-- Modal -->
+<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmLabel">Confirmação de Eliminação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Tem a certeza que deseja eliminar a Referência selecionada e todos os Parâmetros associados?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-danger" id="delete-btn">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
+
+@section('scripts')
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip({placement: 'bottom'})
+})
+$('table[data-form="deleteForm"]').on('click', '.form-delete', function(e){
+    e.preventDefault();
+    var $form=$(this);
+    $('#confirm').modal({ backdrop: 'static', keyboard: false })
+        .on('click', '#delete-btn', function(){
+            $form.submit();
+        });
+});
 @endsection

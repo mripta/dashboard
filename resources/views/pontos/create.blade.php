@@ -14,8 +14,8 @@
                         <div class="card-body">
                             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                                 <label for="name">Nome</label>
-                                <input type="name" class="form-control" id="name" name="name"
-                                       placeholder="Nome do Ponto de Recolha" value="{{ Request::old('name') ?: '' }}">
+                                <input type="text" class="form-control" id="name" name="name"
+                                       placeholder="Nome do Ponto de Recolha" value="{{ old('name') ?: '' }}">
                                 @if ($errors->has('name'))
                                     <p class="text-danger">{{ $errors->first('name') }}</p>
                                 @endif
@@ -23,8 +23,8 @@
 
                             <div class="form-group{{ $errors->has('desc') ? ' has-error' : '' }}">
                                 <label for="desc">Descrição</label>
-                                <input type="desc" class="form-control" id="desc" name="desc"
-                                       placeholder="Descrição do Ponto de Recolha" value="{{ Request::old('desc') ?: '' }}">
+                                <input type="text" class="form-control" id="desc" name="desc"
+                                       placeholder="Descrição do Ponto de Recolha" value="{{ old('desc') ?: '' }}">
                                 @if ($errors->has('desc'))
                                     <p class="text-danger">{{ $errors->first('desc') }}</p>
                                 @endif
@@ -32,8 +32,8 @@
                             <hr>
                             <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                                 <label for="username">Username </label>
-                                <input type="username" class="form-control" id="username" name="username"
-                                       placeholder="Username do Ponto de Recolha" value="{{ Request::old('username') ?: '' }}">
+                                <input type="text" class="form-control" id="username" name="username"
+                                       placeholder="Username do Ponto de Recolha" value="{{ old('username') ?: '' }}">
                                        <small id="emailHelp" class="form-text text-muted">Estes dados serão utilizados para autenticação e envio de dados para o broker.</small>
                                 @if ($errors->has('username'))
                                     <p class="text-danger">{{ $errors->first('username') }}</p>
@@ -43,7 +43,7 @@
                             <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" name="password"
-                                       placeholder="Password do Ponto de Recolha" value="{{ Request::old('password') ?: '' }}">
+                                       placeholder="Password do Ponto de Recolha" value="{{ old('password') ?: '' }}">
                                 @if ($errors->has('password'))
                                     <p class="text-danger">{{ $errors->first('password') }}</p>
                                 @endif
@@ -51,9 +51,9 @@
 
                             <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
                                 <label for="password_confirmation">Confirmação da Password</label>
-                                <input type="password" value="{{ Request::old('password_confirmation') ?: '' }}" class="form-control" 
+                                <input type="password" value="{{ old('password_confirmation') ?: '' }}" class="form-control" 
                                     id="password_confirmation" name="password_confirmation" placeholder="Confirmação da Password do Ponto de Recolha"
-                                    value="{{ Request::old('password_confirmation') ?: '' }}">
+                                    value="{{ old('password_confirmation') ?: '' }}">
                                 @if ($errors->has('password_confirmation'))
                                     <p class="text-danger">{{ $errors->first('password_confirmation') }}</p>
                                 @endif
@@ -69,23 +69,30 @@
                             </div>
                             <hr>
                             <div class="form-group{{ $errors->has('ref') ? ' has-error' : '' }}">
-                                <label for="ref">Ref</label>
+                                <label for="ref">Referências</label>
                                 <div class="input-group increment">
                                     <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="ref" name="refs[]" placeholder="Ref"> 
+                                        <input type="text" class="form-control" id="ref" name="refs[]" placeholder="Referência"> 
                                     </div>
                                     <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="refname" name="refsname[]" placeholder="Ref Nome">
+                                        <input type="text" class="form-control" id="refname" name="refsname[]" placeholder="Nome da Referência">
                                     </div>
                                     <div class="col-sm-2">
                                         <button class="btn btn-primary" id="add" type="button">Adicionar Linha</button>
                                     </div>
+                                    <small id="emailHelp" class="form-text text-muted">As referências são utilizadas para identificar sensores</small>
                                 </div>
-                                @if ($errors->has('ref'))
+                                @if ($errors->has('refs'))
                                     <p class="text-danger">{{ $errors->first('refs') }}</p>
+                                @endif
+                                @if ($errors->has('refs.*'))
+                                    <p class="text-danger">{{ $errors->first('refs.*') }}</p>
                                 @endif
                                 @if ($errors->has('refsname'))
                                     <p class="text-danger">{{ $errors->first('refsname') }}</p>
+                                @endif
+                                @if ($errors->has('refsname.*'))
+                                    <p class="text-danger">{{ $errors->first('refsname.*') }}</p>
                                 @endif
                             </div>
                         </div>
@@ -96,10 +103,10 @@
                     <div class="clone hide">
                         <div class="input-group" style="margin-top:5px">
                             <div class="col-sm-5">
-                                <input type="text" class="form-control" id="ref" name="refs[]" placeholder="Ref"> 
+                                <input type="text" class="form-control" id="ref" name="refs[]" placeholder="Referência"> 
                             </div>
                             <div class="col-sm-5">
-                                <input type="text" class="form-control" id="refname" name="refsname[]" placeholder="Ref Nome">
+                                <input type="text" class="form-control" id="refname" name="refsname[]" placeholder="Nome da Referência">
                             </div>
                             <div class="col-sm-2">
                                 <button class="btn btn-danger" type="button">Remover Linha</button>
