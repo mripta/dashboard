@@ -65,10 +65,6 @@
                                                         tabindex="0" data-toggle="tooltip" title="Editar">
                                                          <i class="far fa-edit"></i>
                                                      </a>
-                                                    {{ Form::model($row, ['method' => 'delete', 'route' => ['team.destroy', $row->id], 'class'=>'btn btn-sm form-delete']) }}
-                                                    {{ Form::hidden('id', $row->id) }}
-                                                    {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'name' => 'deleteTeam', 'id' => 'D'.$row->id.'', 'tabindex'=>'0', 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
-                                                    {{ Form::close() }}
                                                 @endif
                                                 </td>
                                             </tr>
