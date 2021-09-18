@@ -44,7 +44,7 @@ class InviteController extends Controller
     public function create(StoreInviteRequest $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|email|max:255|unique:invites|unique:users'
+            'email' => 'required|email:rfc,dns|max:100|unique:invites|unique:users'
         ]);
 
         $invite = new Invite($request->all());

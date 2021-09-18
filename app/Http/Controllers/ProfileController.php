@@ -84,9 +84,9 @@ class ProfileController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|min:3|max:255',
-            'bio' => 'nullable|string|min:5|max:255',
-            'email' => 'required|string|email|max:100|unique:users,email,'.$user->id,
+            'name' => 'required|string|min:3|max:50',
+            'bio' => 'nullable|string|min:5|max:100',
+            'email' => 'required|email:rfc,dns|max:100|unique:users,email,'.$user->id,
         ]);
 
         if($request->email != $user->email)
