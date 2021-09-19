@@ -64,7 +64,7 @@
                                                     <a href="{{ route('pontos.edit', $row->id) }}" id="{{$row->id}}" class="btn btn-sm btn-info"
                                                         tabindex="0" data-toggle="tooltip" title="Editar">
                                                          <i class="far fa-edit"></i>
-                                                     </a>
+                                                    </a>
                                                 @endif
                                                 </td>
                                             </tr>

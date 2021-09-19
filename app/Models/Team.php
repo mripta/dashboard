@@ -32,6 +32,17 @@ class Team extends Model
     }
 
     /**
+     * Returns the regular users that are not team owners
+     */
+    public function notOwners()
+    {
+        return $this->belongsToMany(User::class)
+        ->withTimestamps()
+        ->withPivot(['owner'])
+        ->wherePivot('owner', 0);
+    }
+
+    /**
      * Get all of the refs for the Team
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

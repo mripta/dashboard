@@ -66,6 +66,7 @@
                                     <option value="{{$user->id}}">{{$user->name}}</option>
                                 @endforeach
                                 </select>
+                                <small id="emailHelp" class="form-text text-muted">Utilizadores com acesso ao Ponto de Recolha</small>
                             </div>
                             <hr>
                             <div class="form-group{{ $errors->has('ref') ? ' has-error' : '' }}">

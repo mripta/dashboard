@@ -16,7 +16,7 @@
                             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                                 <label for="name">Nome</label>
                                 <input type="text" class="form-control" id="name" name="name"
-                                       placeholder="Nome do Ponto de Recolha" value="{{ $team->name }}">
+                                       placeholder="Nome do Ponto de Recolha" value="{{ $team->name }}" required>
                                 @if ($errors->has('name'))
                                     <p class="text-danger">{{ $errors->first('name') }}</p>
                                 @endif
@@ -25,17 +25,17 @@
                             <div class="form-group{{ $errors->has('desc') ? ' has-error' : '' }}">
                                 <label for="desc">Descrição</label>
                                 <input type="text" class="form-control" id="desc" name="desc"
-                                       placeholder="Descrição do Ponto de Recolha" value="{{ $team->description }}">
+                                       placeholder="Descrição do Ponto de Recolha" value="{{ $team->description }}" required>
                                 @if ($errors->has('desc'))
                                     <p class="text-danger">{{ $errors->first('desc') }}</p>
                                 @endif
                             </div>
                             <hr>
                             <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
-                                <label for="username">Username </label>
+                                <label for="username">Username</label>
                                 <input type="text" class="form-control" id="username" name="username"
-                                       placeholder="Username do Ponto de Recolha" value="{{ $team->username }}">
-                                       <small id="emailHelp" class="form-text text-muted">Estes dados serão utilizados para autenticação e envio de dados para o broker.</small>
+                                       placeholder="Username do Ponto de Recolha" value="{{ $team->username }}" required>
+                                <small id="emailHelp" class="form-text text-muted">Estes dados serão utilizados para autenticação e envio de dados para o broker.</small>
                                 @if ($errors->has('username'))
                                     <p class="text-danger">{{ $errors->first('username') }}</p>
                                 @endif
@@ -63,9 +63,13 @@
                             <div class="form-group">
                                 <label for="users">Utilizadores</label>
                                 <select class="select2" name="users[]" id="users" multiple="multiple" data-placeholder="Utilizadores com acesso ao Ponto de Recolha" style="width: 100%;">
-                                @foreach($team->users as $selected)
-                                    @foreach ($users as $user)
-                                    <option value="{{$user->id}}" @if($user->id == $selected->id) selected @endif>{{$user->name}}</option>
+                                @foreach($users as $listuser)
+                                    @foreach($team->users as $teamuser)
+                                        @if($listuser->id != auth()->user()->id && $teamuser->id != auth()->user()->id && $listuser->id == $teamuser->id)
+                                            <option value="{{$listuser->id}}" @if($teamuser->pivot->user_id == $listuser->id) selected @endif>{{$listuser->name}}</option>
+                                        @elseif($listuser->id != auth()->user()->id && $teamuser->id != auth()->user()->id) 
+                                            <option value="{{$listuser->id}}">{{$listuser->name}}</option>
+                                        @endif    
                                     @endforeach
                                 @endforeach
                                 </select>

@@ -18,8 +18,8 @@
                     </a>
                 </li>
 
-                <li class="nav-item has-treeview {{ (Request::is('pontos*') || Request::is('raw*') || Request::is('charts*') || Request::is('table*') ? 'menu-open' : '') }}">
-                    <a href="#" class="nav-link {{ (Request::is('pontos*') || Request::is('raw*') || Request::is('charts*') || Request::is('table*') ? 'active' : '') }}">
+                <li class="nav-item has-treeview {{ (Request::is('pontos*') || Request::is('raw*') || Request::is('charts*') || Request::is('table*') || Request::is('ref*') ? 'menu-open' : '') }}">
+                    <a href="#" class="nav-link {{ (Request::is('pontos*') || Request::is('raw*') || Request::is('charts*') || Request::is('table*') || Request::is('ref*') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-broadcast-tower"></i>
                         <p>Pontos de Recolha
                             <i class="fas fa-angle-left right"></i>
@@ -41,7 +41,7 @@
                         </li>
                         @foreach(Auth::user()->teams as $team)
                         <li class="nav-item">
-                            <a href="{{ route('pontos.info', ['pontoid' => $team->id]) }}" class="nav-link {{ (Request::is('pontos/'.$team->id) || Request::is('raw/'.$team->id) || Request::is('table/'.$team->id) || Request::is('charts/'.$team->id.'*') ? 'active' : '') }}">
+                            <a href="{{ route('pontos.info', ['pontoid' => $team->id]) }}" class="nav-link {{ (Request::is('pontos/'.$team->id) || Request::is('raw/'.$team->id) || Request::is('table/'.$team->id) || Request::is('charts/'.$team->id.'*') || Request::is('ref/create/'.$team->id) || Request::is('ref/'.$team->id.'*') ? 'active' : '') }}">
                                 <i class="fas fa-satellite-dish nav-icon @if($team->connected) text-success @endif"></i>
                                 <p>{{$team->name}}</p>
                             </a>
@@ -61,14 +61,14 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('user.index') }}" class="nav-link {{ (Request::is('admin/user*') ? 'active' : '') }}">
+                    <a href="{{ route('users.index') }}" class="nav-link {{ (Request::is('admin/user*') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-user-cog"></i>
                         <p>Gerir Utilizadores</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('team.index') }}" class="nav-link {{ (Request::is('admin/team*') ? 'active' : '') }}">
+                    <a href="{{ route('teams.index') }}" class="nav-link {{ (Request::is('admin/team*') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-satellite-dish"></i>
                         <p>Gerir Pontos de Recolha</p>
                     </a>
