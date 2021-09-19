@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use App\Models\User;
+use App\Models\Team;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -15,7 +16,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware(['auth','admin']);
     }
 
     /**
@@ -34,39 +35,11 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for editing the specified resource.
      *
+     * @param  \App\Models\User  $id
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        $params = [
-            'title' => 'Adicionar Utilizador',
-        ];
-        return view('users.create')->with($params);
-    }
-
-    /**
-     * Store the user
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password')),
-            'last_ip_address' => '127.0.0.1'
-        ]);
-
-        return redirect()->route('users.index')->with('success', "Utilizador adicionado com sucesso");
-    }
-
     public function edit($id)
     {
         try
@@ -87,17 +60,80 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $id
+     * @return \Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         try
         {
             $user = User::findOrFail($id);
+
             $this->validate($request, [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,'.$id,
+                'name' => 'required|string|min:3|max:50',
+                'bio' => 'nullable|string|min:5|max:100',
+                'email' => 'required|email:rfc,dns|max:100|unique:users,email,'.$id,
+                'admin' => 'boolean',
+                'teamadmin' => 'array'
             ]);
-            $user->name = $request->input('name');
-            $user->email = $request->input('email');
+            
+            // if null -> user is not owner of any team
+            if (is_null($request->teamadmin))
+            {
+                foreach($user->teams as $team)
+                {
+                    // detach
+                    $team->users()->detach($user->id);
+                    //attach
+                    $team->users()->attach($user->id, ['owner' => 0]);
+                }   
+            }
+            else // there are ownership
+            {
+                foreach($user->teams as $team)
+                {
+                    // clear perms
+                    // detach
+                    $team->users()->detach($user->id);
+                    //attach
+                    $team->users()->attach($user->id, ['owner' => 0]);
+
+                    foreach($request->teamadmin as $key => $state)
+                    {
+                        if ($team->id == $key)
+                        {
+                            // detach
+                            $team->users()->detach($user->id);
+                            //attach
+                            $team->users()->attach($user->id, ['owner' => 1]);
+                        }
+                    }
+                }
+            }
+
+            if (!is_null($request->input('password')))
+            {
+                $this->validate($request, [
+                    'password' => 'required|string|min:6|confirmed'
+                ]);
+                $user->password = bcrypt($request->input('password'));
+            }
+
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->bio = $request->bio;
+
+            // check if it has admin tag
+            if($request->admin)
+            {
+                $user->admin = true;
+            } else {
+                $user->admin = false;
+            }
             $user->save();
 
             return redirect()->route('users.index')->with('success', "Utilizador editado com sucesso");
@@ -111,6 +147,12 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\User  $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         try

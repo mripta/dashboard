@@ -11,10 +11,11 @@
                     <div class="card card-primary card-outline">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" data-toggle="dataTable" data-form="deleteForm">
+                                @if(count($users))
+                                <table class="table table-striped" id="dataTable" width="100%" cellspacing="0" data-toggle="dataTable" data-form="deleteForm">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>#</th>
                                         <th>Nome</th>
                                         <th>E-mail</th>
                                         <th># Equipas</th>
@@ -23,7 +24,6 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @if(count($users))
                                         @foreach ($users as $row)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
@@ -38,20 +38,22 @@
                                                 @endif
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('user.edit', $row->id) }}" id="{{$row->id}}" class="btn btn-sm btn-info"
+                                                    <a href="{{ route('users.edit', $row->id) }}" id="{{$row->id}}" class="btn btn-sm btn-info"
                                                        tabindex="0" data-toggle="tooltip" title="Editar">
                                                         <i class="far fa-edit"></i>
                                                     </a>
-                                                    {{ Form::model($row, ['method' => 'delete', 'route' => ['user.destroy', $row->id], 'class'=>'btn btn-sm form-delete']) }}
+                                                    {{ Form::model($row, ['method' => 'delete', 'route' => ['users.destroy', $row->id], 'class'=>'btn btn-sm form-delete']) }}
                                                     {{ Form::hidden('id', $row->id) }}
                                                     {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'name' => 'deleteUser', 'id' => 'D'.$row->id, 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
                                                     {{ Form::close() }}
                                                 </td>
                                             </tr>
                                         @endforeach
-                                    @endif
                                     </tbody>
                                 </table>
+                                @else 
+                                    <p>Não existem utilizadores</p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -73,7 +75,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Tem a certeza que deseja eliminar o administrador selecionado?</p>
+        <p>Tem a certeza que deseja eliminar o utilizador selecionado?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>

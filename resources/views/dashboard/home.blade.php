@@ -16,7 +16,7 @@
                         <div class="icon">
                             <i class="fas @if ($usersc  == 1)fa-user @else fa-users @endif"></i>
                         </div>
-                        @if (Auth::user()->isAdmin())<a href="{{ route('user.index') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
+                        @if (Auth::user()->isAdmin())<a href="{{ route('users.index') }}" class="small-box-footer">Explorar <i class="fas fa-arrow-circle-right"></i></a>@endif
                     </div>
                 </div>
 
