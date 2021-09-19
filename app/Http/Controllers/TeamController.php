@@ -9,13 +9,13 @@ use Illuminate\Http\Request;
 class TeamController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Create a new controller instance that requires authentication
      *
      * @return void
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth','admin']);
     }
 
     /**
@@ -27,54 +27,40 @@ class TeamController extends Controller
     {
         $teams = Team::all();
         $params = [
-            'title' => 'Equipas',
+            'title' => 'Pontos de Recolha',
             'teams' => $teams,
         ];
         return view('teams.index')->with($params);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for editing the specified resource.
      *
+     * @param  \App\Models\Team  $id
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        $params = [
-            'title' => 'Criar Equipa',
-        ];
-        return view('teams.create')->with($params);
-    }
-
-    /**
-     * Store the user
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password')),
-            'last_ip_address' => '127.0.0.1' //$request->ip(),
-        ]);
-
-        return redirect()->route('teams.index')->with('success', "Equipa criada com sucesso");
-    }
-
     public function edit($id)
     {
         try
         {
-            $user = User::findOrFail($id);
+            $team = Team::findOrFail($id);
+
+            $teamusers = array();
+
+            // get the users from the team
+            // and add the ids to an array
+            foreach($team->users as $user)
+            {
+                array_push($teamusers, $user->id);
+            }
+
+            // get the users that do not belong to the team
+            $users = User::whereNotIn('id', $teamusers)->get();
+
             $params = [
-                'title' => "Editar Equipa",
-                'user' => $user
+                'title' => "Editar Ponto de Recolha",
+                'team' => $team,
+                'users' => $users
             ];
             return view('teams.edit')->with($params);
         }
@@ -82,48 +68,79 @@ class TeamController extends Controller
         {
             if ($ex instanceof ModelNotFoundException)
             {
-                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar o utilizador especificado");
+                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar o ponto de recolha especificado");
             }
         }
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Team  $id
+     * @return \Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
-        try
-        {
-            $team = Team::findOrFail($id);
-            $this->validate($request, [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,'.$id,
-            ]);
-            $team->name = $request->input('name');
-            $team->description = $request->input('description');
-            $team->save();
+        $team = Team::findOrFail($id);
 
-            return redirect()->route('teams.index')->with('success', "Equipa editada com sucesso");
-        }
-        catch (ModelNotFoundException $ex)
+        $this->validate($request, [
+            'name' => 'required|string|max:50',
+            'description' => 'required|string|max:100',
+            'username' => 'required|string|max:10|alpha_dash|unique:teams,username,'.$id,
+            'users' => 'array'
+        ]);
+
+        if (!is_null($request->input('password')))
         {
-            if ($ex instanceof ModelNotFoundException)
+            $this->validate($request, [
+                'password' => 'required|string|min:6|confirmed'
+            ]);
+            $team->password = bcrypt($request->input('password'));
+        }
+
+        $team->name = $request->input('name');
+        $team->description = $request->input('description');
+        $team->username = $request->input('username');
+        $team->save();
+
+        // remove regular users
+        $team->users()->wherePivot('owner', 0)->detach();
+
+        // iterate users list, check if the users exists :)
+        // and add them to the team
+        if (!is_null($request->input('users')))
+        {
+            foreach($request->input('users') as $user)
             {
-                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar a equipa especificado");
+                if (User::where('id', $user)->count() == 1)
+                    $team->users()->attach($user);
             }
         }
+
+        return redirect()->route('teams.index')->with('success', "Ponto de recolha editado com sucesso");
+
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Team  $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         try
         {
             $team = Team::findOrFail($id);
             $team->delete();
-            return redirect()->route('teams.index')->with('success', "Equipa eliminada com sucesso");
+            return redirect()->route('teams.index')->with('success', "Ponto de recolha eliminado com sucesso");
         }
         catch (ModelNotFoundException $ex)
         {
             if ($ex instanceof ModelNotFoundException)
             {
-                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar a equipa especificado");
+                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar o ponto de recolha especificado");
             }
         }
     }

@@ -11,10 +11,10 @@
                     <div class="card card-primary card-outline">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" data-toggle="dataTable" data-form="deleteForm">
+                                <table class="table table-striped" id="dataTable" width="100%" cellspacing="0" data-toggle="dataTable" data-form="deleteForm">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>#</th>
                                         <th>Nome</th>
                                         <th>Descrição</th>
                                         <th>Username</th>
@@ -30,11 +30,11 @@
                                                 <td>{{$row->description}}</td>
                                                 <td>{{$row->username}}</td>
                                                 <td>
-                                                    <a href="{{ route('team.edit', $row->id) }}" id="{{$row->id}}" class="btn btn-sm btn-info"
+                                                    <a href="{{ route('teams.edit', $row->id) }}" id="{{$row->id}}" class="btn btn-sm btn-info"
                                                        tabindex="0" data-toggle="tooltip" title="Editar">
                                                         <i class="far fa-edit"></i>
                                                     </a>
-                                                    {{ Form::model($row, ['method' => 'delete', 'route' => ['team.destroy', $row->id], 'class'=>'btn btn-sm form-delete']) }}
+                                                    {{ Form::model($row, ['method' => 'delete', 'route' => ['teams.destroy', $row->id], 'class'=>'btn btn-sm form-delete']) }}
                                                     {{ Form::hidden('id', $row->id) }}
                                                     {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'name' => 'deleteTeam', 'id' => 'D'.$row->id.'', 'tabindex'=>'0', 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
                                                     {{ Form::close() }}
