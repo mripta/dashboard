@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card card-primary card-outline">
-                    <form method="post" role="form" action="{{ route('pontos.create') }}">
+                    <form method="post" role="form" action="{{ route('pontos.store') }}">
                         @csrf
                         <div class="card-body">
                             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">

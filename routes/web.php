@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\PontoController;
+use App\Http\Controllers\ParamController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -44,15 +45,15 @@ Route::get('/pontos', [PontoController::class, 'index'])->name('pontos.index');
 Route::get('/pontos/{pontoid}', [PontoController::class, 'info'])->name('pontos.info')->whereNumber('pontoid');
 // create point
 Route::get('/pontos/create', [PontoController::class, 'create'])->name('pontos.create');
-Route::post('/pontos/create', [PontoController::class, 'create'])->name('pontos.create');
+Route::post('/pontos/create', [PontoController::class, 'store'])->name('pontos.store');
 // edit point
 Route::get('/pontos/{pontoid}/edit', [PontoController::class, 'edit'])->name('pontos.edit');
 Route::patch('/pontos/{pontoid}', [PontoController::class, 'patch'])->name('pontos.patch');
 
 // ============================== PARAMS ==============================
 // manage params
-Route::get('/params/{refid}', [PontoController::class, 'paramEdit'])->name('params.edit')->whereNumber('refid');
-Route::patch('/params/{refid}', [PontoController::class, 'paramPatch'])->name('params.patch')->whereNumber('refid');
+Route::get('/params/{refid}', [ParamController::class, 'edit'])->name('params.edit')->whereNumber('refid');
+Route::patch('/params/{refid}', [ParamController::class, 'patch'])->name('params.patch')->whereNumber('refid');
 
 // ============================== REFS ==============================
 // create ref

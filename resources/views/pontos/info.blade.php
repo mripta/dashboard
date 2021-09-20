@@ -150,7 +150,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Referência</th>
-                                    <th>Opções</th>
+                                    @if(Auth::user()->isOwner($team)) <th>Opções</th> @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -160,6 +160,10 @@
                                         <td>{{ $key }}</td>
                                         <td>
                                             @if(Auth::user()->isOwner($team))
+                                            <a href="{{ route('refs.edit', [$team->id, $key]) }}" class="btn btn-sm btn-primary form-delete" tabindex="0" data-toggle="tooltip" title="Criar Alerta">
+                                                <i class="far fa-bell"></i>
+                                            </a>
+
                                             <a href="{{ route('refs.edit', [$team->id, $key]) }}" class="btn btn-sm btn-info" tabindex="0" data-toggle="tooltip" title="Editar">
                                                 <i class="far fa-edit"></i>
                                             </a>
@@ -202,7 +206,7 @@
                                     @for ($i = 1; $i < $parammax+1; $i++)
                                     <th>Parâmetro {{ $i }}</th>
                                     @endfor
-                                    <th>Opções</th>
+                                    @if(Auth::user()->isOwner($team)) <th>Opções</th> @endif
                                 </tr>
                             </thead>
                             <tbody>
