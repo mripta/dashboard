@@ -89,16 +89,16 @@
 
         <div class="row">
             <div class="col-12">
-                <div class="card card-primary card-outline">
+                <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Membros</h3>
+                        <h3 class="card-title"><i class="fas fa-user-friends"></i> Membros</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body p-0">
                         <ul class="users-list">
                             @foreach ($team->users as $user)
                             <li>
-                                <img src="/img/profiles/{{$user->image}}" class="rounded" width="100" height="100" alt="Avatar {{$user->name}}">
+                                <img src="/img/profiles/{{$user->image}}" class="rounded @if($user->pivot->owner) border border-primary @endif" width="100" height="100" alt="Avatar {{$user->name}}">
                                 <p class="users-list-name">{{$user->name}}</p>
                                 @if($user->bio) <span class="users-list-date">{{ $user->bio }}</span> @endif
                             </li>
@@ -110,9 +110,9 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="card card-primary card-outline">
+                <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Autenticação e json para envio de dados</h3>
+                        <h3 class="card-title"><i class="fas fa-key"></i> Autenticação e json para envio de dados</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -138,38 +138,110 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="card card-primary card-outline">
+                <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Referências</h3>
+                        <h3 class="card-title"><i class="fas fa-bell"></i> Alertas</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        @if (!empty($dataset))
-                        <table class="table table-striped" style="margin-bottom: 0" data-form="deleteForm">
+                        @if (!empty($alerts) && count($alerts) > 0)
+                        <table class="table table-striped" style="margin-bottom: 0" data-form="deleteAlert">
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Nome</th>
                                     <th>Referência</th>
+                                    <th>Parâmetro</th>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                    <th>Ativo</th>
                                     @if(Auth::user()->isOwner($team)) <th>Opções</th> @endif
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($dataset as $key => $linha)
+                                @foreach ($alerts as $alert)
                                     <tr>
-                                        <td>{{ $loop->index +1 }}</td>
-                                        <td>{{ $key }}</td>
+                                        <td>{{ $loop->iteration}}</td>
+                                        <td>{{ $alert->name }}</td>
+                                        <td>{{ $alert->ref->ref }}</td>
+                                        <td>{{ $alert->param->param }}</td>
+                                        <td>{{ $alert->min }}</td>
+                                        <td>{{ $alert->max }}</td>
+                                        <td>
+                                        @if($alert->enabled)
+                                            <span class="badge badge-success">Sim</span> 
+                                        @else
+                                            <span class="badge badge-danger">Não</span> 
+                                        @endif
+                                        </td>
                                         <td>
                                             @if(Auth::user()->isOwner($team))
-                                            <a href="{{ route('refs.edit', [$team->id, $key]) }}" class="btn btn-sm btn-primary form-delete" tabindex="0" data-toggle="tooltip" title="Criar Alerta">
-                                                <i class="far fa-bell"></i>
-                                            </a>
-
-                                            <a href="{{ route('refs.edit', [$team->id, $key]) }}" class="btn btn-sm btn-info" tabindex="0" data-toggle="tooltip" title="Editar">
+                                            @if($alert->enabled)
+                                                <a href="{{ route('alert.toggle', $alert->id) }}" id="{{$alert->id}}" style="margin-right:9px" class="btn btn-sm btn-danger"
+                                                    tabindex="0" data-toggle="tooltip" title="Desativar Alerta">
+                                                     <i class="fas fa-power-off"></i>
+                                                </a>
+                                                @else
+                                                <a href="{{ route('alert.toggle', $alert->id) }}" id="{{$alert->id}}" style="margin-right:9px" class="btn btn-sm btn-success"
+                                                    tabindex="0" data-toggle="tooltip" title="Ativar Alerta">
+                                                     <i class="fas fa-power-off"></i>
+                                                </a>
+                                                @endif
+                                            <a href="{{ route('alert.edit', $alert->id) }}" class="btn btn-sm btn-info" tabindex="0" data-toggle="tooltip" title="Editar">
                                                 <i class="far fa-edit"></i>
                                             </a>
 
-                                            {{ Form::model($linha, ['method' => 'delete', 'route' => ['refs.destroy', $key], 'class'=>'btn btn-sm form-delete']) }}
-                                            {{ Form::hidden('teamid', $team->id) }}
+                                            {{ Form::model($alert, ['method' => 'delete', 'route' => ['alert.destroy', $alert->id], 'class'=>'btn btn-sm form-delete']) }}
+                                            {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
+                                            {{ Form::close() }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        @else
+                            <p>Não existem alertas</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-satellite-dish"></i> Sensores - Referências</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        @if (!empty($refs) && count($refs) > 0)
+                        <table class="table table-striped" style="margin-bottom: 0" data-form="deleteRef">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Referência</th>
+                                    <th>Nome</th>
+                                    @if(Auth::user()->isOwner($team)) <th>Opções</th> @endif
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($refs as $ref)
+                                    <tr>
+                                        <td>{{ $loop->index +1 }}</td>
+                                        <td>{{ $ref->ref }}</td>
+                                        <td>{{ $ref->name }}</td>
+                                        <td>
+                                            @if(Auth::user()->isOwner($team))
+                                            <a href="{{ route('alert.create', $ref->id) }}" class="btn btn-sm btn-primary" style="margin-right:9px" tabindex="0" data-toggle="tooltip" title="Criar Alerta">
+                                                <i class="far fa-bell"></i>
+                                            </a>
+
+                                            <a href="{{ route('refs.edit', $ref->id) }}" class="btn btn-sm btn-info" tabindex="0" data-toggle="tooltip" title="Editar">
+                                                <i class="far fa-edit"></i>
+                                            </a>
+
+                                            {{ Form::model($ref, ['method' => 'delete', 'route' => ['refs.destroy', $ref->id], 'class'=>'btn btn-sm form-delete']) }}
                                             {{ Form::button('<i class="far fa-trash-alt"></i>', ['class' => 'btn btn-sm btn-danger form-delete', 'data-toggle'=>'tooltip', 'title'=>'Eliminar']) }}
                                             {{ Form::close() }}
                                             @endif
@@ -184,7 +256,7 @@
                     </div>
                     @if(Auth::user()->isOwner($team))
                     <div class="card-footer">
-                        <a href="{{route('refs.create', $team->id)}}" class="btn btn-primary">Adicionar Referência</a>
+                        <a href="{{route('refs.create', $team->id)}}" class="btn btn-success">Adicionar Referência</a>
                     </div>
                     @endif
                 </div>
@@ -192,9 +264,9 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="card card-primary card-outline">
+                <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Parâmetros</h3>
+                        <h3 class="card-title"><i class="fas fa-satellite-dish"></i> Sensores - Parâmetros</h3>
                     </div>
                     <div class="card-body">
                         @if (!empty($dataset))
@@ -248,8 +320,8 @@
 @endsection
 
 @section('modal')
-<!-- Modal -->
-<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
+<!-- Ref Modal -->
+<div class="modal fade" id="ref" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -268,16 +340,44 @@
     </div>
   </div>
 </div>
+<!-- Alert Modal -->
+<div class="modal fade" id="alert" tabindex="-1" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmLabel">Confirmação de Eliminação</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Tem a certeza que deseja eliminar o Alerta selecionado?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-danger" id="delete-btn">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('scripts')
 $(function () {
     $('[data-toggle="tooltip"]').tooltip({placement: 'bottom'})
 })
-$('table[data-form="deleteForm"]').on('click', '.form-delete', function(e){
+$('table[data-form="deleteRef"]').on('click', '.form-delete', function(e){
     e.preventDefault();
     var $form=$(this);
-    $('#confirm').modal({ backdrop: 'static', keyboard: false })
+    $('#ref').modal({ backdrop: 'static', keyboard: false })
+        .on('click', '#delete-btn', function(){
+            $form.submit();
+        });
+});
+$('table[data-form="deleteAlert"]').on('click', '.form-delete', function(e){
+    e.preventDefault();
+    var $form=$(this);
+    $('#alert').modal({ backdrop: 'static', keyboard: false })
         .on('click', '#delete-btn', function(){
             $form.submit();
         });

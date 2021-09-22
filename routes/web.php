@@ -2,14 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RefController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\TeamController;
 use App\Http\Controllers\DataController;
-use App\Http\Controllers\PontoController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AlertController;
 use App\Http\Controllers\ParamController;
+use App\Http\Controllers\PontoController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminAlertController;
 
 use App\Http\Controllers\Auth\RegisterController;
 /*
@@ -47,8 +49,8 @@ Route::get('/pontos/{pontoid}', [PontoController::class, 'info'])->name('pontos.
 Route::get('/pontos/create', [PontoController::class, 'create'])->name('pontos.create');
 Route::post('/pontos/create', [PontoController::class, 'store'])->name('pontos.store');
 // edit point
-Route::get('/pontos/{pontoid}/edit', [PontoController::class, 'edit'])->name('pontos.edit');
-Route::patch('/pontos/{pontoid}', [PontoController::class, 'patch'])->name('pontos.patch');
+Route::get('/pontos/{pontoid}/edit', [PontoController::class, 'edit'])->name('pontos.edit')->whereNumber('pontoid');
+Route::patch('/pontos/{pontoid}', [PontoController::class, 'patch'])->name('pontos.patch')->whereNumber('pontoid');
 
 // ============================== PARAMS ==============================
 // manage params
@@ -60,10 +62,22 @@ Route::patch('/params/{refid}', [ParamController::class, 'patch'])->name('params
 Route::get('/ref/create/{teamid}', [RefController::class, 'create'])->name('refs.create')->whereNumber('teamid');
 Route::post('/ref/create/{teamid}', [RefController::class, 'store'])->name('refs.create')->whereNumber('teamid');
 // delete ref
-Route::delete('/ref/{refname}', [RefController::class, 'destroy'])->name('refs.destroy');
+Route::delete('/ref/{refid}', [RefController::class, 'destroy'])->name('refs.destroy')->whereNumber('refid');
 // edit ref
-Route::get('/ref/{teamid}/{refid}', [RefController::class, 'edit'])->name('refs.edit')->whereNumber('teamid');
-Route::patch('/ref/{refid}', [RefController::class, 'patch'])->name('refs.patch');
+Route::get('/ref/{refid}', [RefController::class, 'edit'])->name('refs.edit')->whereNumber('refid');
+Route::patch('/ref/{refid}', [RefController::class, 'patch'])->name('refs.patch')->whereNumber('refid');
+
+// ============================== ALERTS ==============================
+// create alert
+Route::get('/alert/create/{refid}', [AlertController::class, 'create'])->name('alert.create')->whereNumber('refid');
+Route::post('/alert/create/{refid}', [AlertController::class, 'store'])->name('alert.store')->whereNumber('refid');
+// delete alert
+Route::delete('/alert/{alertid}', [AlertController::class, 'destroy'])->name('alert.destroy');
+// edit alert
+Route::get('/alert/{alertid}/edit', [AlertController::class, 'edit'])->name('alert.edit')->whereNumber('alertid');
+Route::patch('/alert/{alertid}', [AlertController::class, 'update'])->name('alert.patch')->whereNumber('alertid');
+// toggle alert
+Route::get('/alert/{alertid}/toggle', [AlertController::class, 'toggle'])->name('alert.toggle')->whereNumber('alertid');
 
 // ============================== CHARTS ==============================
 // live chart -> ToDo
@@ -89,12 +103,15 @@ Route::patch('perfil', [ProfileController::class, 'profileUpdate'])->name('profi
 // ============================== ADMIN ==============================
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function(){
     // admin manage users
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class, ['except' => ['create', 'store', 'show']]);
     // admin manage teams (pontos de recolha)
-    Route::resource('teams', TeamController::class);
+    Route::resource('teams', TeamController::class, ['except' => ['create', 'store', 'show']]);
+    // admin manage alerts
+    Route::resource('alerts', AdminAlertController::class, ['except' => ['create', 'store', 'show']]);
+    Route::get('/alert/{alertid}/toggle', [AdminAlertController::class, 'toggle'])->name('alerts.toggle')->whereNumber('alertid');
 
     // ============================== INVITES ==============================
-    Route::get('/invite', [InviteController::class, 'show'])->name('invite.show');
+    Route::get('/invite', [InviteController::class, 'index'])->name('invite.index');
     Route::post('/invite', [InviteController::class, 'create'])->name('invite.create');
     Route::post('/invite/{id}', [InviteController::class, 'notify'])->name('invite.notify');
     Route::delete('/invite/{id}', [InviteController::class, 'destroy'])->name('invite.destroy');

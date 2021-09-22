@@ -51,4 +51,14 @@ class Team extends Model
     {
         return $this->hasMany(Ref::class);
     }
+
+    /**
+     * Get all of the alerts for the Team
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function alerts()
+    {
+        return $this->hasMany(Alert::class);
+    }
 }

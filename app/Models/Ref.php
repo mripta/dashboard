@@ -27,4 +27,14 @@ class Ref extends Model
     {
         return $this->hasMany(Param::class);
     }
+
+    /**
+     * Get all of the alerts for the Ref
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function alerts()
+    {
+        return $this->hasMany(Param::class);
+    }
 }
