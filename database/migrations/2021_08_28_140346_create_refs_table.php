@@ -18,7 +18,6 @@ class CreateRefsTable extends Migration
             $table->string('ref');
             $table->string('name');
             $table->foreignId('team_id')->constrained();
-            //$table->integer('team_id')->unsigned();
             $table->timestamps();
         });
     }

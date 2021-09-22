@@ -98,7 +98,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Enviar</button>
+                            <button type="submit" class="btn btn-success">Enviar</button>
                         </div>
                     </form>
                     <div class="clone hide">

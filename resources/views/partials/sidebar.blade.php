@@ -54,7 +54,7 @@
                 <li class="nav-header">Administração</li>
 
                 <li class="nav-item">
-                    <a href="{{ route('invite.show') }}" class="nav-link {{ (Request::is('admin/invite') ? 'active' : '') }}">
+                    <a href="{{ route('invite.index') }}" class="nav-link {{ (Request::is('admin/invite') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-user-plus"></i>
                         <p>Gerir Convites</p>
                     </a>
@@ -71,6 +71,13 @@
                     <a href="{{ route('teams.index') }}" class="nav-link {{ (Request::is('admin/team*') ? 'active' : '') }}">
                         <i class="nav-icon fas fa-satellite-dish"></i>
                         <p>Gerir Pontos de Recolha</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('alerts.index') }}" class="nav-link {{ (Request::is('admin/alert*') ? 'active' : '') }}">
+                        <i class="nav-icon fas fa-bell"></i>
+                        <p>Gerir Alertas</p>
                     </a>
                 </li>
                 @endif

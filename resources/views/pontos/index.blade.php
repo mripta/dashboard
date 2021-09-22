@@ -47,7 +47,7 @@
                                                     <ul class="list-inline">
                                                         @foreach ($row->users as $user)
                                                             <li class="list-inline-item">
-                                                                <img alt="Perfil {{$user->name}}" class="table-avatar @if($user->pivot->owner) border border-danger @endif" data-toggle="tooltip" title="{{$user->name}}" src="/img/profiles/{{$user->image}}">
+                                                                <img alt="Perfil {{$user->name}}" class="table-avatar @if($user->pivot->owner) border border-primary @endif" data-toggle="tooltip" title="{{$user->name}}" src="/img/profiles/{{$user->image}}">
                                                             </li>
                                                         @endforeach
                                                     </ul>
