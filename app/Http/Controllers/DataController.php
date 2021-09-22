@@ -21,6 +21,13 @@ class DataController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * Display the formated table data page.
+     * /table/{teamid}
+     *
+     * @param  int  $teamid
+     * @return \Illuminate\Http\Response
+     */
     public function table($teamid, Request $request)
     {
         // force teamid to int
@@ -58,6 +65,13 @@ class DataController extends Controller
         return view('dashboard.table', $params);
     }
 
+    /**
+     * Display the payload table data page.
+     * /raw/{teamid}
+     *
+     * @param  int  $teamid
+     * @return \Illuminate\Http\Response
+     */
     public function raw($teamid, Request $request)
     {
         // force teamid to int
@@ -94,6 +108,13 @@ class DataController extends Controller
         return view('dashboard.raw', $params);
     }
 
+    /**
+     * Display the charts data page.
+     * /charts/{teamid}/{chart?}
+     *
+     * @param  int  $teamid
+     * @return \Illuminate\Http\Response
+     */
     public function charts($teamid, $chart = null, Request $request)
     {
         // force teamid to int

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
-use Validator;
 use App\Models\Invite;
 use Illuminate\Http\Request;
 use App\Notifications\InviteNotification;
@@ -19,10 +17,16 @@ class InviteController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware(['auth', 'admin']);
     }
 
-    public function show()
+    /**
+     * Display the Invites page.
+     *
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
         // pedidos de convite -> quando o token é null
         $requests = Invite::where('token', null)->get();
@@ -40,7 +44,12 @@ class InviteController extends Controller
         return view('users.invite')->with($params);
     }
 
-    // creates the invite and sends the email notification from the admin dashboard
+    /**
+     * Creates the invite and sends the email notification from the admin dashboard
+     * /admin/invite
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function create(StoreInviteRequest $request)
     {
         $this->validate($request, [
@@ -53,47 +62,39 @@ class InviteController extends Controller
 
         Notification::route('mail', $request->input('email'))->notify(new InviteNotification($invite->getLink()));
 
-        return redirect()->route('invite.show')->with('success', 'Convite enviado com sucesso.');
+        return redirect()->route('invite.index')->with('success', 'Convite enviado com sucesso.');
     }
 
-        // admin delete invite
-        public function destroy($id)
-        {
-            try
-            {
-                $invite = Invite::findOrFail($id);
-                $invite->delete();
-                return redirect()->route('invite.show')->with('success', "Convite eliminado com sucesso");
-            }
-            catch (ModelNotFoundException $ex)
-            {
-                if ($ex instanceof ModelNotFoundException)
-                {
-                    return redirect()->route('invite.show')->with('error', "Não foi possível encontrar o convite especificado");
-                }
-            }
-        }
-
-    // Invites gets aproved by the admin
-    // sends the mail notification to the user and adds the created_at field
-    public function notify($id)
+    /**
+     * Remove the specified Invite from storage.
+     * /admin/invite/{inviteid}
+     *
+     * @param  int  $inviteid
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($inviteid)
     {
-        try
-        {
-            $invite = Invite::where('id', $id)->where('token', null)->firstOrFail();
-            $invite->generateInviteToken();
-            $invite->save();
+        $invite = Invite::findOrFail($inviteid);
+        $invite->delete();
+        return redirect()->route('invite.index')->with('success', "Convite eliminado com sucesso");
+    }
 
-            Notification::route('mail', $invite['email'])->notify(new InviteNotification($invite->getLink()));
+    /**
+     * When the Invites gets aproved by the admin sends the mail 
+     * notification to the user and adds the created_at field
+     * /admin/invite/{inviteid}
+     *
+     * @param  int  $inviteid
+     * @return \Illuminate\Http\Response
+     */
+    public function notify($inviteid)
+    {
+        $invite = Invite::where('id', $inviteid)->where('token', null)->firstOrFail();
+        $invite->generateInviteToken();
+        $invite->save();
 
-            return redirect()->route('invite.show')->with('success', "Convite enviado com sucesso");
-        }
-        catch (ModelNotFoundException $ex)
-        {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('invite.show')->with('error', "Não foi possível encontrar o convite especificado");
-            }
-        }
+        Notification::route('mail', $invite['email'])->notify(new InviteNotification($invite->getLink()));
+
+        return redirect()->route('invite.index')->with('success', "Convite enviado com sucesso");
     }
 }

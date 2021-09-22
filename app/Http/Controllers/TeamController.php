@@ -19,75 +19,72 @@ class TeamController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Teams.
+     * /admin/teams
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // get all the teams
         $teams = Team::all();
+
         $params = [
             'title' => 'Pontos de Recolha',
             'teams' => $teams,
         ];
+
         return view('teams.index')->with($params);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified Team.
+     * /admin/teams/{teamid}/edit
      *
-     * @param  \App\Models\Team  $id
+     * @param  int $teamid
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($teamid)
     {
-        try
+        // find the team
+        $team = Team::findOrFail($teamid);
+
+        $teamusers = array();
+
+        // get the users from the team
+        // and add the ids to an array
+        foreach($team->users as $user)
         {
-            $team = Team::findOrFail($id);
-
-            $teamusers = array();
-
-            // get the users from the team
-            // and add the ids to an array
-            foreach($team->users as $user)
-            {
-                array_push($teamusers, $user->id);
-            }
-
-            // get the users that do not belong to the team
-            $users = User::whereNotIn('id', $teamusers)->get();
-
-            $params = [
-                'title' => "Editar Ponto de Recolha",
-                'team' => $team,
-                'users' => $users
-            ];
-            return view('teams.edit')->with($params);
+            array_push($teamusers, $user->id);
         }
-        catch (ModelNotFoundException $ex)
-        {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar o ponto de recolha especificado");
-            }
-        }
+
+        // get the users that do not belong to the team
+        $users = User::whereNotIn('id', $teamusers)->get();
+
+        $params = [
+            'title' => "Editar Ponto de Recolha",
+            'team' => $team,
+            'users' => $users
+        ];
+        return view('teams.edit')->with($params);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified Team in storage.
+     * /admin/teams/{teamid}
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Team  $id
+     * @param  int $teamid
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $teamid)
     {
-        $team = Team::findOrFail($id);
+        $team = Team::findOrFail($teamid);
 
         $this->validate($request, [
             'name' => 'required|string|max:50',
             'description' => 'required|string|max:100',
-            'username' => 'required|string|max:10|alpha_dash|unique:teams,username,'.$id,
+            'username' => 'required|string|max:10|alpha_dash|unique:teams,username,'.$teamid,
             'users' => 'array'
         ]);
 
@@ -119,29 +116,22 @@ class TeamController extends Controller
         }
 
         return redirect()->route('teams.index')->with('success', "Ponto de recolha editado com sucesso");
-
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified Team from storage.
+     * /admin/teams/{teamid}
      *
-     * @param  \App\Models\Team  $id
+     * @param  int  $teamid
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($teamid)
     {
-        try
-        {
-            $team = Team::findOrFail($id);
-            $team->delete();
-            return redirect()->route('teams.index')->with('success', "Ponto de recolha eliminado com sucesso");
-        }
-        catch (ModelNotFoundException $ex)
-        {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('teams.index')->with('error', "Não foi possível encontrar o ponto de recolha especificado");
-            }
-        }
+        // get the team
+        $team = Team::findOrFail($teamid);
+
+        $team->delete();
+
+        return redirect()->route('teams.index')->with('success', "Ponto de recolha eliminado com sucesso");
     }
 }
