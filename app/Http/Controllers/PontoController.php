@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ref;
+use Auth;
 use App\Models\Data;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Param;
+use App\Models\Alert;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PontoController extends Controller
 {
@@ -23,7 +23,7 @@ class PontoController extends Controller
     }
 
     /**
-     * Display the user Pontos de Recolha page.
+     * Display the user Pontos de Recolha index page.
      * /pontos
      * 
      * @return \Illuminate\Http\Response
@@ -31,7 +31,7 @@ class PontoController extends Controller
     public function index()
     {
         // user teams
-        $teams = User::find(auth()->user()->id)->teams;
+        $teams = User::with('teams')->find(auth()->user()->id)->teams;
 
         $params = [
             'title' => 'Pontos de Recolha',
@@ -51,64 +51,53 @@ class PontoController extends Controller
      */
     public function info($teamid)
     {
-        try
+        // force teamid to int
+        $teamid = intval($teamid);
+
+        $dataset = array();
+        $parammax = 0;
+        $paramc = 0;
+
+        $team = Team::with('refs')->findOrFail($teamid);
+        $datac = Data::where('teamid', $teamid)->count();
+
+        // get the alerts
+        $alerts = Alert::where('team_id', $teamid)->get();
+
+        // create dataset var -> array of refs and params
+        // iterate all refs from the team
+        foreach ($team->refs as $ref)
         {
-            // force teamid to int
-            $teamid = intval($teamid);
+            // count params
+            $paramc += Param::where('ref_id', $ref->id)->count();
 
-            $dataset = array();
-            $parammax = 0;
-            $paramc = 0;
-
-            $team = Team::findOrFail($teamid);
-            $datac = Data::where('teamid', $teamid)->count();
+            $dataset[$ref->ref] = array();
+            // get the params of the ref
+            $params = Param::where('ref_id', $ref->id)->get();
             
-            foreach($team->refs as $ref)
+            // save max number of params
+            if (count($params) > $parammax)
+                $parammax = count($params);
+
+            // iterate all the params
+            foreach ($params as $param)
             {
-                $paramc += Param::where('ref_id', $ref->id)->count();
-            }
-
-            // create dataset var -> array of refs and params
-            // Get the refs of the team
-            $refs = Ref::where('team_id', $teamid)->get(['id','ref']);
-
-            // iterate all refs from the team
-            foreach ($refs as $ref)
-            {
-                $dataset[$ref->ref] = array();
-                // get the params of the ref
-                $params = Param::where('ref_id', $ref->id)->get();
-                
-                // save max number of params
-                if (count($params) > $parammax)
-                    $parammax = count($params);
-
-                // iterate all the params
-                foreach ($params as $param)
-                {
-                    array_push($dataset[$ref->ref], $param->param);
-                }
-            }
-
-            $params = [
-                'title' => "Ponto de Recolha",
-                'team' => $team,
-                'datac' => $datac,
-                'paramc' => $paramc,
-                'dataset' => $dataset,
-                'refs' => $refs,
-                'parammax' => $parammax
-            ];
-
-            return view('pontos.info')->with($params);
-        }
-        catch (ModelNotFoundException $ex)
-        {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('pontos.index')->with('error', "Não foi possível encontrar o Ponto de recolha especificado");
+                array_push($dataset[$ref->ref], $param->param);
             }
         }
+
+        $params = [
+            'title' => "Ponto de Recolha",
+            'team' => $team,
+            'datac' => $datac,
+            'paramc' => $paramc,
+            'dataset' => $dataset,
+            'refs' => $team->refs,
+            'parammax' => $parammax,
+            'alerts' => $alerts
+        ];
+
+        return view('pontos.info')->with($params);
     }
 
     /**
@@ -119,7 +108,7 @@ class PontoController extends Controller
      */
     public function create()
     {
-        // get all users
+        // get all users without self user
         $users = User::where('id', '<>', auth()->user()->id)->get();
 
         $params = [
@@ -128,7 +117,7 @@ class PontoController extends Controller
         ];
         return view('pontos.create')->with($params);
     }
-    
+
     /**
      * Store a newly created Ponto de Recolha in BD.
      * /pontos/create
@@ -191,7 +180,7 @@ class PontoController extends Controller
 
     /**
      * Show the form for editing the Ponto de Recolha.
-     * /pontos/{pontoid}/edit
+     * /pontos/{teamid}/edit
      * 
      * @param  int  $teamid
      * @return \Illuminate\Http\Response
@@ -224,7 +213,7 @@ class PontoController extends Controller
 
     /**
      * Update the Ponto de Recolha resource in BD.
-     * /pontos/{pontoid}
+     * /pontos/{teamid}
      * 
      * @param  int  $teamid
      * @param  \Illuminate\Http\Request  $request

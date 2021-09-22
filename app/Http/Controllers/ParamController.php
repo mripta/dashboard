@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+use App\Models\Ref;
+use App\Models\Param;
 use Illuminate\Http\Request;
 
 class ParamController extends Controller
@@ -29,7 +32,7 @@ class ParamController extends Controller
         $refid = intval($refid);
 
         // get the ref
-        $ref = Ref::findOrFail($refid);
+        $ref = Ref::with('params')->with('team')->findOrFail($refid);
 
         // if the user is not admin of the team
         if (!Auth::user()->isOwner($ref->team))
@@ -37,13 +40,10 @@ class ParamController extends Controller
             return redirect()->route('pontos.index')->with('error', "Não tem acesso para editar este recurso");
         }
 
-        // get the params of the ref if they exist
-        $param = Param::where('ref_id', $ref->id)->get();
-
         $params = [
             'title' => "Editar Parâmetros - ".$ref->team->name,
             'ref' => $ref,
-            'params' => $param
+            'params' => $ref->params
         ];
 
         return view('pontos.param')->with($params);
@@ -63,7 +63,7 @@ class ParamController extends Controller
         $refid = intval($refid);
 
         // get the ref
-        $ref = Ref::findOrFail($refid);
+        $ref = Ref::with('team')->findOrFail($refid);
 
         // if the user is not admin of the team
         if (!Auth::user()->isOwner($ref->team))

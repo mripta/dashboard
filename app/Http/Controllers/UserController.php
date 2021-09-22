@@ -20,156 +20,138 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of Users.
+     * /admin/users
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('teams')->get();
+
         $params = [
             'title' => 'Utilizadores',
             'users' => $users,
         ];
+
         return view('users.index')->with($params);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified User.
+     * /admin/users/{userid}/edit
      *
-     * @param  \App\Models\User  $id
+     * @param  int  $userid
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($userid)
     {
-        try
-        {
-            $user = User::findOrFail($id);
-            $params = [
-                'title' => "Editar Utilizador",
-                'user' => $user
-            ];
-            return view('users.edit')->with($params);
-        }
-        catch (ModelNotFoundException $ex)
-        {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('users.index')->with('error', "Não foi possível encontrar o utilizador especificado");
-            }
-        }
+        // get the user
+        $user = User::findOrFail($userid);
+
+        $params = [
+            'title' => "Editar Utilizador",
+            'user' => $user
+        ];
+        return view('users.edit')->with($params);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
+     * Update the specified User in storage.
+     * /admin/users/{userid}
+     * 
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $id
+     * @param  int  $userid
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $userid)
     {
-        try
-        {
-            $user = User::findOrFail($id);
+        // get the user
+        $user = User::with('teams')->findOrFail($userid);
 
-            $this->validate($request, [
-                'name' => 'required|string|min:3|max:50',
-                'bio' => 'nullable|string|min:5|max:100',
-                'email' => 'required|email:rfc,dns|max:100|unique:users,email,'.$id,
-                'admin' => 'boolean',
-                'teamadmin' => 'array'
-            ]);
+        $this->validate($request, [
+            'name' => 'required|string|min:3|max:50',
+            'bio' => 'nullable|string|min:5|max:100',
+            'email' => 'required|email:rfc,dns|max:100|unique:users,email,'.$userid,
+            'admin' => 'boolean|nullable',
+            'teamadmin' => 'array'
+        ]);
             
-            // if null -> user is not owner of any team
-            if (is_null($request->teamadmin))
+        // if null -> user is not owner of any team
+        if (is_null($request->teamadmin))
+        {
+            foreach($user->teams as $team)
             {
-                foreach($user->teams as $team)
-                {
-                    // detach
-                    $team->users()->detach($user->id);
-                    //attach
-                    $team->users()->attach($user->id, ['owner' => 0]);
-                }   
-            }
-            else // there are ownership
+                // detach
+                $team->users()->detach($user->id);
+                //attach
+                $team->users()->attach($user->id, ['owner' => 0]);
+            }   
+        }
+        else // there are ownership
+        {
+            foreach($user->teams as $team)
             {
-                foreach($user->teams as $team)
-                {
-                    // clear perms
-                    // detach
-                    $team->users()->detach($user->id);
-                    //attach
-                    $team->users()->attach($user->id, ['owner' => 0]);
+                // clear perms
+                // detach
+                $team->users()->detach($user->id);
+                //attach
+                $team->users()->attach($user->id, ['owner' => 0]);
 
-                    foreach($request->teamadmin as $key => $state)
+                foreach($request->teamadmin as $key => $state)
+                {
+                    if ($team->id == $key)
                     {
-                        if ($team->id == $key)
-                        {
-                            // detach
-                            $team->users()->detach($user->id);
-                            //attach
-                            $team->users()->attach($user->id, ['owner' => 1]);
-                        }
+                        // detach
+                        $team->users()->detach($user->id);
+                        //attach
+                        $team->users()->attach($user->id, ['owner' => 1]);
                     }
                 }
             }
-
-            if (!is_null($request->input('password')))
-            {
-                $this->validate($request, [
-                    'password' => 'required|string|min:6|confirmed'
-                ]);
-                $user->password = bcrypt($request->input('password'));
-            }
-
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->bio = $request->bio;
-
-            // check if it has admin tag
-            if($request->admin)
-            {
-                $user->admin = true;
-            } else {
-                $user->admin = false;
-            }
-            $user->save();
-
-            return redirect()->route('users.index')->with('success', "Utilizador editado com sucesso");
         }
-        catch (ModelNotFoundException $ex)
+
+        if (!is_null($request->input('password')))
         {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('users.index')->with('error', "Não foi possível encontrar o utilizador especificado");
-            }
+            $this->validate($request, [
+                'password' => 'required|string|min:6|confirmed'
+            ]);
+            $user->password = bcrypt($request->input('password'));
         }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->bio = $request->bio;
+
+        // check if it has admin tag
+        if($request->admin)
+        {
+            $user->admin = true;
+        } else {
+            $user->admin = false;
+        }
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', "Utilizador editado com sucesso");
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified User from BD.
+     * /admin/users/{userid}
      *
-     * @param  \App\Models\User  $id
+     * @param  int $userid
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($userid)
     {
-        try
-        {
-            if (Auth::user()->id == $id || $id == 1)
-                return redirect()->route('users.index')->with('error', "Não é possível eliminar este utilizador");
+        if (Auth::user()->id == $userid || $userid == 1)
+            return redirect()->route('users.index')->with('error', "Não é possível eliminar este utilizador");
 
-            $user = User::findOrFail($id);
-            $user->delete();
-            return redirect()->route('users.index')->with('success', "Utilizador eliminado com sucesso");
-        }
-        catch (ModelNotFoundException $ex)
-        {
-            if ($ex instanceof ModelNotFoundException)
-            {
-                return redirect()->route('users.index')->with('error', "Não foi possível encontrar o utilizador especificado");
-            }
-        }
+        // find the user
+        $user = User::findOrFail($userid);
+
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', "Utilizador eliminado com sucesso");
     }
 }
