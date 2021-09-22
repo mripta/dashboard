@@ -90,10 +90,12 @@ class RefController extends Controller
     public function destroy($refid, Request $request)
     {
         // force refid to int
-        $refid = intval($request->input('teamid'));
+        $refid = intval($refid);
 
         // get the ref by the name and team id
         $ref = Ref::with('team')->findOrFail($refid);
+
+        $teamid = $ref->team->id;
 
         // if the user is not admin of the team
         if (!Auth::user()->isOwner($ref->team))

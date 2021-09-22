@@ -89,27 +89,39 @@ class ParamController extends Controller
                     $del->delete();
             }
         }
-
-        // foreach param 
-        foreach($request->input('param') as $key => $param)
+        
+        // if only 1 param, we need to updated it
+        if(count($request->input('param')) == 1)
         {
-            // check if the param exists
-            $temp = Param::where('ref_id', $refid)->where('param', $param)->first();
-            
-            // if the param exists, update
-            if(!is_null($temp))
+            $param = Param::where('ref_id', $refid)->first();
+
+            $param->name = $request->input('paramname')[0];
+            $param->param = $request->input('param')[0];
+            $param->save();
+
+        } else {
+            // more than 1 param
+            // iterate provided params 
+            foreach($request->input('param') as $key => $param)
             {
-                $temp->name = $request->input('paramname')[$key];
-                $temp->param = $param;
-                $temp->save();
-            }
-            else // creates a new param
-            {
-                $pm = new Param();
-                $pm->name = $request->input('paramname')[$key];
-                $pm->param = $param;
-                $pm->ref_id = $refid;
-                $pm->save();
+                // check if the param exists
+                $temp = Param::where('ref_id', $refid)->where('param', $param)->first();
+
+                // if the param exists, update
+                if(!is_null($temp))
+                {
+                    $temp->name = $request->input('paramname')[$key];
+                    $temp->param = $request->input('param')[$key];
+                    $temp->save();
+                }
+                else // creates a new param
+                {
+                    $pm = new Param();
+                    $pm->name = $request->input('paramname')[$key];
+                    $pm->param = $param;
+                    $pm->ref_id = $refid;
+                    $pm->save();
+                }
             }
         }
 
