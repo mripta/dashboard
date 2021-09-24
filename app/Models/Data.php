@@ -10,6 +10,8 @@ class Data extends Model
     protected $collection = 'publish';
     protected $primaryKey = '_id';
 
+    protected $dates = ['date'];
+
    /**
      * The attributes that are mass assignable.
      *

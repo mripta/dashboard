@@ -81,7 +81,7 @@ Route::get('/alert/{alertid}/toggle', [AlertController::class, 'toggle'])->name(
 
 // ============================== CHARTS ==============================
 // live chart -> ToDo
-Route::get('/charts/{teamid}/live',[DataController::class, 'live'])->name('live');
+Route::get('/charts/{teamid}/live/{time?}',[DataController::class, 'live'])->name('live')->whereNumber('teamid')->whereNumber('time');
 // general charts
 Route::get('/charts/{teamid}/{chart?}',[DataController::class, 'charts'])->name('charts')->whereNumber('teamid');
 // charts post to define the date picker

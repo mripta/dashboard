@@ -216,22 +216,25 @@ class DataController extends Controller
         return view('dashboard.charts', $params);
     }
 
-    public function live($teamid, Request $request)
+    public function live(Request $request, $teamid, $timestamp = null, $refid = null, $param = null)
     {
         // force teamid to int
         $teamid = intval($teamid);
 
-        // if it is an ajax request
-        if($request->ajax())
+        // if it is an ajax request and timestamp is not null
+        if($request->ajax() && $timestamp != null)
         {
-            // get all the data from the team
-            $sensors = Data::where('teamid', $teamid)->get();
+            // parse timestamp to int
+            $timestamp = intval($timestamp);
+
+            // get all the data from the team after the user open the page
+            $sensors = Data::where('teamid', $teamid)->where('timestamp', '>', $timestamp)->get();
+
+            $data = array();
 
             // iterate per mongo message
             foreach ($sensors as $sensor)
             {
-                //$sensor->ref -> ref
-
                 // if array key does not exist, initialize it
                 if (!isset($data[$sensor->ref]))
                 {
@@ -240,6 +243,7 @@ class DataController extends Controller
 
                 // get the mongodb packet payload
                 $linha = json_decode($sensor->payload);
+                // delete ref from payload
                 unset($linha->ref);
                 // adds time element and cast the timestamp to date
                 $linha->time = date('d/m/Y H:i:s', $sensor->timestamp);
@@ -251,17 +255,11 @@ class DataController extends Controller
                 $data[$sensor->ref] = array_merge_recursive($data[$sensor->ref], $aux);
             }
 
-            // iterate data refs
-            foreach($data as $key => $refs)
-            {
-                // encodes the arrays to json 
-                $data[$key] = json_encode(array($key => $refs));
-            }
-
             return response()->json($data);
         }
 
         $dataset = array();
+        $refl = array ();
 
         // create dataset var -> array of refs and params
         // Get the refs of the team
@@ -270,6 +268,9 @@ class DataController extends Controller
         // iterate all refs from the team
         foreach ($refs as $ref)
         {
+            // create refs array
+            array_push($refl, $ref->ref);
+
             $dataset[$ref->ref] = array();
             // get the params of the ref
             $params = Param::where('ref_id', $ref->id)->get();
@@ -284,7 +285,9 @@ class DataController extends Controller
         $params = [
             'title' => "Charts - Live",
             'teamid' => $teamid,
-            'dataset' => $dataset
+            //'refs' => json_encode($refl),
+            'dataset' => $dataset,
+            'j' => 0
         ];
         return view('dashboard.live', $params);
     }
