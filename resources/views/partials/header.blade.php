@@ -26,12 +26,7 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
   <!-- Style -->
-  <link rel="stylesheet" href="{{ asset('css/all.fontawesome.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/daterangepicker.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/select2-bootstrap4.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/datatables.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/mripta.min.css') }}">
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
