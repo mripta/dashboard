@@ -58,17 +58,39 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Returns if the user is admin
+     * 
+     * @return boolean
      */
     public function isAdmin()
     {
         return $this->admin;
     }
 
+    /**
+     * Returns if the user is owner of the provided Team
+     * 
+     * @return boolean
+     */
     public function isOwner(Team $team)
     {
         foreach($team->owners as $owner)
         {
             if($this->id == $owner->id)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns if the user belongs to the provided Team
+     * 
+     * @return boolean
+     */
+    public function isMember(Team $team)
+    {
+        foreach($team->users as $user)
+        {
+            if($this->id == $user->id)
                 return true;
         }
         return false;

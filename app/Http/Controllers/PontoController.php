@@ -59,6 +59,13 @@ class PontoController extends Controller
         $paramc = 0;
 
         $team = Team::with('refs')->findOrFail($teamid);
+
+        // check if the user belongs to the team
+        if (!Auth::user()->isMember($team))
+        {
+            return redirect()->route('pontos.index')->with('error', "Não tem acesso para visualizar este recurso");
+        }
+
         $datac = Data::where('teamid', $teamid)->count();
 
         // get the alerts
@@ -191,7 +198,7 @@ class PontoController extends Controller
         $teamid = intval($teamid);
 
         // get the ref
-        $team = team::findOrFail($teamid);
+        $team = Team::findOrFail($teamid);
 
         // if the user is not admin of the team
         if (!Auth::user()->isOwner($team))
@@ -224,8 +231,8 @@ class PontoController extends Controller
         // force teamid to int
         $teamid = intval($teamid);
 
-        // get the ref
-        $team = team::findOrFail($teamid);
+        // get the team
+        $team = Team::findOrFail($teamid);
 
         // if the user is not admin of the team
         if (!Auth::user()->isOwner($team))
