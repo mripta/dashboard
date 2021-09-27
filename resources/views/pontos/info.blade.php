@@ -59,17 +59,22 @@
             <div class="col-12">
                 <div class="info-box card-primary card-outline">
                     <div class="col-sm text-center">
-                        <a href="{{ route('charts', [$team->id, 'line']) }}" class="btn btn-app">
+                        <a href="{{ route('live', ['line', $team->id]) }}" class="btn btn-app">
+                            <i class="fas fa-sync-alt"></i> Gráfico em Tempo Real
+                        </a>
+                    </div>
+                    <div class="col-sm text-center">
+                        <a href="{{ route('charts', ['line', $team->id]) }}" class="btn btn-app">
                             <i class="fas fa-chart-line"></i> Gráfico de Linhas
                         </a>
                     </div>
                     <div class="col-sm text-center">
-                        <a href="{{ route('charts', [$team->id, 'bar']) }}" class="btn btn-app">
+                        <a href="{{ route('charts', ['bar', $team->id]) }}" class="btn btn-app">
                             <i class="fas fa-chart-bar"></i> Gráfico de Barras
                         </a>
                     </div>
                     <div class="col-sm text-center">
-                        <a href="{{ route('charts', [$team->id, 'radar']) }}" class="btn btn-app">
+                        <a href="{{ route('charts', ['radar', $team->id]) }}" class="btn btn-app">
                             <i class="fas fa-chart-pie"></i> Gráfico de Radar
                         </a>
                     </div>

@@ -80,12 +80,22 @@ Route::patch('/alert/{alertid}', [AlertController::class, 'update'])->name('aler
 Route::get('/alert/{alertid}/toggle', [AlertController::class, 'toggle'])->name('alert.toggle')->whereNumber('alertid');
 
 // ============================== CHARTS ==============================
-// live chart -> ToDo
-Route::get('/charts/{teamid}/live/{time?}',[DataController::class, 'live'])->name('live')->whereNumber('teamid')->whereNumber('time');
+
+Route::get('/charts/live/{chart}/{teamid}/{refid?}/{paramid?}',[DataController::class, 'live'])->name('live')
+->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+', 'refid' => '[0-9]+', 'paramid' => '[0-9]+']);
+
+Route::post('/charts/genroute',[DataController::class, 'genRoute'])->name('genroute');
+
+Route::post('/charts/live/{teamid}/{refid?}/{paramid?}',[DataController::class, 'livepost'])->name('livepost')
+->where(['teamid' => '[0-9]+', 'refid' => '[0-9]+', 'paramid' => '[0-9]+']);
+
 // general charts
-Route::get('/charts/{teamid}/{chart?}',[DataController::class, 'charts'])->name('charts')->whereNumber('teamid');
+Route::get('/charts/{chart}/{teamid}',[DataController::class, 'charts'])->name('charts')
+        ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+']);
+
 // charts post to define the date picker
-Route::post('/charts/{teamid}/{chart?}',[DataController::class, 'charts'])->whereNumber('teamid');
+Route::post('/charts/{chart}/{teamid}',[DataController::class, 'charts'])
+        ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+']);
 
 // ============================== TABLES ==============================
 // raw table

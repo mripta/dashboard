@@ -12,14 +12,58 @@
                             <h3 class="card-title">Sensores - Live</h3>
                             <div class="card-tools" style="display: flex">
                                 <div class="input-group input-group-sm" style="width: 50px;">
-                                        <button onclick="downloadCanvas()" class="btn-sm btn-primary">
-                                            <i class="fas fa-download"></i>
-                                        </button>
+                                    <button onclick="downloadCanvas()" class="btn-sm btn-primary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <canvas id="myChart"></canvas>
+                            <div class="row">
+                                <form action="{{route('genroute')}}" method="POST" class="form-inline"> {{-- {{ route('genroute') }} --}}
+                                    @csrf
+                                    <input type="hidden" name="teamid" value="{{$teamid}}">
+                                    <!-- charts -->
+                                    <div class="form-group input-group-sm" style="margin-left:15px">
+                                        Gráfico
+                                        <select class="form-control" style="margin-left:3px" id="chart" name="chart">
+                                        <option value="line" @if($chart == "line") selected @endif>Linhas</option>
+                                        <option value="bar" @if($chart == "bar") selected @endif>Barras</option>
+                                        <option value="radar" @if($chart == "radar") selected @endif>Radar</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group input-group-sm" style="margin-left:10px">
+                                        Referência
+                                        <select class="form-control" style="margin-left:3px" id="ref" name="refid" onclick="document.getElementById('paramlist').value=0">
+                                        <option value="0">Todas</option>
+                                        @foreach($refs as $ref)
+                                            <option value="{{$ref->id}}" @if($ref->id == $refid) selected @endif>{{$ref->name}}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+
+                                    {{-- show params selectbox if ref is defined --}}
+                                    @if(!is_null($refid))
+                                    <div class="form-group input-group-sm" style="margin-left:10px">
+                                        Parametro
+                                        <select class="form-control" style="margin-left:3px" id="paramlist" name="paramid">
+                                        <option value="0">Todos</option>
+                                        @foreach($params as $param)
+                                            <option value="{{$param->id}}" @if($param->id == $paramid) selected @endif>{{$param->name}}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+                                    @endif
+
+                                    <div class="input-group-append" style="margin-left:10px">
+                                        <button type="submit" class="btn btn-default btn-sm">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <canvas id="myChart" class=""></canvas>
                         </div>
                     </div>
                 </div>
@@ -77,19 +121,19 @@ var colorsBackground = [
 
 var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
-    type: 'line',
+    type: '{{$chart}}',
     data: {
         labels: [],
         datasets: [
         @foreach ($dataset as $key => $ref)
             @foreach ($ref as $param)
-                {
-                    label: '{{$key}} - {{$param}}',
-                    fill: false,
-                    backgroundColor: colorsBackground[{{$j}}],
-                    borderColor: colorsBorder[{{$j++}}],
-                    data: []
-                },
+            {
+                label: '{{$key}} - {{$param}}',
+                fill: false,
+                backgroundColor: colorsBackground[{{$j}}],
+                borderColor: colorsBorder[{{$j++}}],
+                data: []
+            },   
             @endforeach
         @endforeach
         ]
@@ -123,8 +167,14 @@ var myChart = new Chart(ctx, {
     }
 });
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 var updateChart = function() {
-    $.get("{{route('live', [$teamid, time()])}}", function(response){
+    $.post("{{route('livepost', [$teamid, $refid, $paramid])}}", { time: {{time()}}}, function(response){
         // temporary empty arrays
         @foreach ($dataset as $key => $ref)
         @foreach ($ref as $param)
