@@ -20,12 +20,22 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build & Push to Docker Hub
-        id: docker_build
+      - name: Build
         uses: docker/build-push-action@v2
         with:
-          push: true
+          context: .
+          load: true
           tags: mripta/dashboard:latest,mripta/dashboard:${{ github.event.release.tag_name }}
+      - name: Container Image Scan
+        uses: azure/container-scan@v0
+        with:
+          image-name: mripta/dashboard:latest
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: mripta/broker:latest,mripta/broker:${{ github.event.release.tag_name }}
       - name: Update Image Overview
         uses: meeDamian/sync-readme@v1.0.6
         with:
