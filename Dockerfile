@@ -23,7 +23,7 @@ ENV MAIL_ENCRYPTION=null
 ENV MAIL_FROM_ADDRESS=null
 
 # Install dependencies
-RUN apt-get update && apt-get install -y libonig-dev libcurl4-openssl-dev pkg-config libssl-dev
+RUN apt-get update && apt-get install -y libonig-dev libcurl4-openssl-dev pkg-config libssl-dev zip
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
