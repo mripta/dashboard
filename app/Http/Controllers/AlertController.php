@@ -17,7 +17,6 @@ class AlertController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('auth');
         $this->middleware('auth');
     }
 
@@ -48,7 +47,7 @@ class AlertController extends Controller
 
     /**
      * Update the Alert in BD.
-     * /alerts/{alertid}
+     * /alert/{alertid}
      *
      * @param  int  $alertid
      * @param  \Illuminate\Http\Request  $request
@@ -93,6 +92,7 @@ class AlertController extends Controller
 
     /**
      * Remove the specified Alert from the DB.
+     * /alert/{alertid}
      *
      * @param  int  $alertid
      * @return \Illuminate\Http\Response
@@ -121,6 +121,7 @@ class AlertController extends Controller
 
     /**
      * Show the form for creating a new Alert.
+     * /alert/create/{refid}
      *
      * @return \Illuminate\Http\Response
      */
@@ -196,7 +197,7 @@ class AlertController extends Controller
 
     /**
      * Toggles the enabled state of the Alert.
-     * /alert/togle/{alertid}
+     * /alert/{alertid}/toggle
      *
      * @param  int  $alertid
      * @return \Illuminate\Http\Response

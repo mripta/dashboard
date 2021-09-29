@@ -125,7 +125,7 @@ class DataController extends Controller
 
     /**
      * Display the charts data page.
-     * /charts/{teamid}/{chart?}
+     * /charts/{chart}/{teamid}
      *
      * @param  string   $chart
      * @param  int      $teamid
@@ -240,7 +240,7 @@ class DataController extends Controller
     }
 
     /**
-     * Display the charts live data page.
+     * Display the live charts data page.
      * /charts/live/{chart}/{teamid}/{refid?}/{paramid?}
      *
      * @param  string  $chart

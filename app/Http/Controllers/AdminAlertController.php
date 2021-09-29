@@ -96,6 +96,7 @@ class AdminAlertController extends Controller
 
     /**
      * Remove the specified Alert from the DB.
+     * /admin/alerts/{alertid}
      *
      * @param  int  $alertid
      * @return \Illuminate\Http\Response
@@ -116,7 +117,7 @@ class AdminAlertController extends Controller
 
     /**
      * Toggles the enabled state of the Alert.
-     * /alert/togle/{alertid}
+     * /alerts/{alertid}/toggle
      *
      * @param  int  $alertid
      * @return \Illuminate\Http\Response

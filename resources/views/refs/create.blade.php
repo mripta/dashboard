@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card card-primary card-outline">
-                    <form method="post" role="form" action="{{ route('refs.create', $teamid) }}">
+                    <form method="post" role="form" action="{{ route('refs.createpost', $teamid) }}">
                         @csrf
                         <div class="card-body">
                             <div class="form-group{{ $errors->has('ref') ? ' has-error' : '' }}">

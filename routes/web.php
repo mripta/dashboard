@@ -60,7 +60,7 @@ Route::patch('/params/{refid}', [ParamController::class, 'patch'])->name('params
 // ============================== REFS ==============================
 // create ref
 Route::get('/ref/create/{teamid}', [RefController::class, 'create'])->name('refs.create')->whereNumber('teamid');
-Route::post('/ref/create/{teamid}', [RefController::class, 'store'])->name('refs.create')->whereNumber('teamid');
+Route::post('/ref/create/{teamid}', [RefController::class, 'store'])->name('refs.createpost')->whereNumber('teamid');
 // delete ref
 Route::delete('/ref/{refid}', [RefController::class, 'destroy'])->name('refs.destroy')->whereNumber('refid');
 // edit ref
@@ -80,19 +80,18 @@ Route::patch('/alert/{alertid}', [AlertController::class, 'update'])->name('aler
 Route::get('/alert/{alertid}/toggle', [AlertController::class, 'toggle'])->name('alert.toggle')->whereNumber('alertid');
 
 // ============================== CHARTS ==============================
-
+// get live chart
 Route::get('/charts/live/{chart}/{teamid}/{refid?}/{paramid?}',[DataController::class, 'live'])->name('live')
 ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+', 'refid' => '[0-9]+', 'paramid' => '[0-9]+']);
-
-Route::post('/charts/genroute',[DataController::class, 'genRoute'])->name('genroute');
-
+// post ajax to get json live data
 Route::post('/charts/live/{teamid}/{refid?}/{paramid?}',[DataController::class, 'livepost'])->name('livepost')
 ->where(['teamid' => '[0-9]+', 'refid' => '[0-9]+', 'paramid' => '[0-9]+']);
+// redirect to live routes based on params
+Route::post('/charts/genroute',[DataController::class, 'genRoute'])->name('genroute');
 
 // general charts
 Route::get('/charts/{chart}/{teamid}',[DataController::class, 'charts'])->name('charts')
         ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+']);
-
 // charts post to define the date picker
 Route::post('/charts/{chart}/{teamid}',[DataController::class, 'charts'])
         ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+']);
@@ -105,10 +104,11 @@ Route::post('/raw/{teamid}',[DataController::class, 'raw'])->whereNumber('teamid
 Route::get('/table/{teamid}',[DataController::class, 'table'])->whereNumber('teamid')->name('table');
 Route::post('/table/{teamid}',[DataController::class, 'table'])->whereNumber('teamid');
 
- // ============================== PROFILE ==============================
+// ============================== PROFILE ==============================
 Route::get('definicoes', [ProfileController::class, 'index'])->name('profile.definicoes');
+// update password and profile
 Route::patch('definicoes/password', [ProfileController::class, 'passwordUpdate'])->name('profile.password');
-Route::patch('perfil', [ProfileController::class, 'profileUpdate'])->name('profile.update');
+Route::patch('definicoes/perfil', [ProfileController::class, 'profileUpdate'])->name('profile.update');
 
 // ============================== ADMIN ==============================
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function(){
@@ -118,7 +118,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function(){
     Route::resource('teams', TeamController::class, ['except' => ['create', 'store', 'show']]);
     // admin manage alerts
     Route::resource('alerts', AdminAlertController::class, ['except' => ['create', 'store', 'show']]);
-    Route::get('/alert/{alertid}/toggle', [AdminAlertController::class, 'toggle'])->name('alerts.toggle')->whereNumber('alertid');
+    Route::get('/alerts/{alertid}/toggle', [AdminAlertController::class, 'toggle'])->name('alerts.toggle')->whereNumber('alertid');
 
     // ============================== INVITES ==============================
     Route::get('/invite', [InviteController::class, 'index'])->name('invite.index');
