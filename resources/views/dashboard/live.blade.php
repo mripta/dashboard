@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', $title)
-
 @section('content')
     <section class="content">
         <div class="container-fluid">
@@ -9,20 +7,17 @@
                 <div class="col-12">
                     <div class="card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Sensores - Live</h3>
+                            <h3 class="card-title">{{$title}}</h3>
                             <div class="card-tools" style="display: flex">
                                 <div class="input-group input-group-sm" style="width: 50px;">
                                     <button onclick="downloadCanvas()" class="btn-sm btn-primary">
                                         <i class="fas fa-download"></i>
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="row">
-                                <form action="{{route('genroute')}}" method="POST" class="form-inline"> {{-- {{ route('genroute') }} --}}
+                                <form action="{{route('genroute')}}" method="POST" class="form-inline">
                                     @csrf
                                     <input type="hidden" name="teamid" value="{{$teamid}}">
+                                    <input type="hidden" name="time" value="{{ (session()->get('time')) ? session()->get('time') : time() }}">
                                     <!-- charts -->
                                     <div class="form-group input-group-sm" style="margin-left:15px">
                                         Gráfico
@@ -46,10 +41,10 @@
                                     {{-- show params selectbox if ref is defined --}}
                                     @if(!is_null($refid))
                                     <div class="form-group input-group-sm" style="margin-left:10px">
-                                        Parametro
+                                        Parâmetro
                                         <select class="form-control" style="margin-left:3px" id="paramlist" name="paramid">
                                         <option value="0">Todos</option>
-                                        @foreach($params as $param)
+                                        @foreach($paramsl as $param)
                                             <option value="{{$param->id}}" @if($param->id == $paramid) selected @endif>{{$param->name}}</option>
                                         @endforeach
                                         </select>
@@ -63,7 +58,9 @@
                                     </div>
                                 </form>
                             </div>
-                            <canvas id="myChart" class=""></canvas>
+                        </div>
+                        <div class="card-body p-0">
+                            <canvas id="myChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -142,7 +139,7 @@ var myChart = new Chart(ctx, {
         responsive: true,
         title: {
             display: true,
-            text: 'Sensors'
+            text: '{{$title}}'
         },
         scales: {
             xAxes: [{
@@ -160,7 +157,7 @@ var myChart = new Chart(ctx, {
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: 'Time'
+                    labelString: 'Tempo'
                 }
             }]
         }
@@ -174,7 +171,7 @@ $.ajaxSetup({
 });
 
 var updateChart = function() {
-    $.post("{{route('livepost', [$teamid, $refid, $paramid])}}", { time: {{time()}}}, function(response){
+    $.post("{{route('livepost', [$teamid, $refid, $paramid])}}", { time: {{ (session()->get('time')) ? session()->get('time') : time() }} }, function(response){
         // temporary empty arrays
         @foreach ($dataset as $key => $ref)
         @foreach ($ref as $param)

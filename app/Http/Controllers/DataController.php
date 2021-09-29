@@ -65,9 +65,8 @@ class DataController extends Controller
         }
 
         $params = [
-            'title' => 'Dados Formatados',
+            'title' => 'Tabela Formatada - '.$team->name,
             'data' => $data,
-            'teamname' => $team->name,
             'j' => 1
         ];
 
@@ -117,9 +116,8 @@ class DataController extends Controller
         }
 
         $params = [
-            'title' => 'Dados RAW',
-            'data' => $data,
-            'teamname' => $team->name
+            'title' => 'Tabela RAW - '.$team->name,
+            'data' => $data
         ];
 
         return view('dashboard.raw', $params);
@@ -232,11 +230,10 @@ class DataController extends Controller
         }
 
         $params = [
-            'title' => 'Gráficos',
+            'title' => 'Gráficos - '.$team->name,
             'dataset' => $dataset,
             'chart' => $chart,
             'data' => $data,
-            'teamname' => $team->name,
             'j' => 0
         ];
         return view('dashboard.charts', $params);
@@ -295,6 +292,9 @@ class DataController extends Controller
                 $params = Param::where('ref_id', $ref->id)->get();
             }
 
+            // get all the params to populate the droplist
+            $paramsl = Param::where('ref_id', $ref->id)->get();
+
             // iterate all the params
             foreach ($params as $param)
             {
@@ -312,10 +312,10 @@ class DataController extends Controller
             {
                 $dataset[$ref->ref] = array();
                 // get the params of the ref
-                $params = Param::where('ref_id', $ref->id)->get();
+                $paramsl = Param::where('ref_id', $ref->id)->get();
 
                 // iterate all the params
-                foreach ($params as $param)
+                foreach ($paramsl as $param)
                 {
                     array_push($dataset[$ref->ref], $param->param);
                 }
@@ -323,13 +323,13 @@ class DataController extends Controller
         }
 
         $view = [
-            'title' => "Charts - Live",
+            'title' => "Gráficos em Tempo Real - ".$team->name,
             'teamid' => $teamid,
             'refid' => $refid,
             'paramid' => $paramid,
             'dataset' => $dataset,
             'refs' => $team->refs,
-            'params' => $params,
+            'paramsl' => $paramsl,
             'chart' => $chart,
             'j' => 0
         ];
@@ -437,6 +437,7 @@ class DataController extends Controller
             'chart' => 'required',
             'refid' => 'nullable|integer',
             'paramid' => 'nullable|integer',
+            'time' => 'required|integer'
         ]);
 
         $chart = 'line';
@@ -454,19 +455,19 @@ class DataController extends Controller
         // if null ref
         if($request->refid == 0)
         {
-            return redirect()->route('live', [$chart, $request->teamid]);
+            return redirect()->route('live', [$chart, $request->teamid])->with('time', $request->time);
         }
         elseif($request->paramid == 0) // if null param
         {
             //check ref
             $refs = Ref::where('id', $request->refid)->where('team_id', $request->teamid)->firstOrFail();
 
-            return redirect()->route('live', [$chart, $request->teamid, $request->refid]);
+            return redirect()->route('live', [$chart, $request->teamid, $request->refid])->with('time', $request->time);
         }
 
         //check param
-        Param::where('id', $request->param)->where('ref_id', $request->refid)->firstOrFail();
+        Param::where('id', $request->paramid)->where('ref_id', $request->refid)->firstOrFail();
 
-        return redirect()->route('live', [$chart, $request->teamid, $request->refid, $request->paramid]);
+        return redirect()->route('live', [$chart, $request->teamid, $request->refid, $request->paramid])->with('time', $request->time);
     }
 }
