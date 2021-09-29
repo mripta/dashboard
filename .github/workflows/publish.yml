@@ -26,16 +26,22 @@ jobs:
           context: .
           load: true
           tags: mripta/dashboard:latest,mripta/dashboard:${{ github.event.release.tag_name }}
-      - name: Container Image Scan
-        uses: azure/container-scan@v0
+      #- name: Container Image Scan
+      #  uses: azure/container-scan@v0
+      #  with:
+      #    image-name: mripta/dashboard:latest
+      - name: Docker Image Scan for Vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image-name: mripta/dashboard:latest
+          image: mripta/dashboard:latest
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: mripta/broker:latest,mripta/broker:${{ github.event.release.tag_name }}
+          tags: mripta/dashboard:latest,mripta/dashboard:${{ github.event.release.tag_name }}
       - name: Update Image Overview
         uses: meeDamian/sync-readme@v1.0.6
         with:
