@@ -26,16 +26,11 @@ jobs:
           context: .
           load: true
           tags: mripta/dashboard:latest,mripta/dashboard:${{ github.event.release.tag_name }}
-      #- name: Container Image Scan
-      #  uses: azure/container-scan@v0
-      #  with:
-      #    image-name: mripta/dashboard:latest
       - name: Docker Image Scan for Vulnerabilities
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: mripta/dashboard:latest
+       uses: azure/container-scan@v0
+       with:
+         image-name: mripta/dashboard:latest
+         severity-threshold: CRITICAL
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
