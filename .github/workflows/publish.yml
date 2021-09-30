@@ -27,10 +27,10 @@ jobs:
           load: true
           tags: mripta/dashboard:latest,mripta/dashboard:${{ github.event.release.tag_name }}
       - name: Docker Image Scan for Vulnerabilities
-       uses: azure/container-scan@v0
-       with:
-         image-name: mripta/dashboard:latest
-         severity-threshold: CRITICAL
+        uses: azure/container-scan@v0
+        with:
+          image-name: mripta/dashboard:latest
+          severity-threshold: CRITICAL
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
