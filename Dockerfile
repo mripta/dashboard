@@ -1,6 +1,6 @@
 FROM php:7.4-fpm
 
-ENV APP_DEBUG=true
+ENV APP_DEBUG=false
 ENV APP_URL=http://localhost
 
 ENV DB_HOST=database
@@ -23,7 +23,7 @@ ENV MAIL_ENCRYPTION=null
 ENV MAIL_FROM_ADDRESS=null
 
 # Install dependencies
-RUN apt-get update && apt-get install -y libonig-dev libcurl4-openssl-dev pkg-config libssl-dev
+RUN apt-get update && apt-get install -y libonig-dev libcurl4-openssl-dev pkg-config libssl-dev zip
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -49,9 +49,15 @@ COPY .env.example /var/www/.env
 # Define work path
 WORKDIR /var/www
 
-# Generate ENV key
-RUN composer install
+# Install Packages
+RUN composer install --optimize-autoloader --no-dev
+# Generate APP key
 RUN php artisan key:generate
+
+# Install Optimizations
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
 
 # Change current user to www
 USER www

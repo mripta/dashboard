@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', $title." - ".$teamname)
-
 @section('content')
     <section class="content">
         <div class="container-fluid">
@@ -9,15 +7,15 @@
                 <div class="col-12">
                     <div class="card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Gráfico - {{ ucfirst($chart) }}</h3>
+                            <h3 class="card-title">{{$title}}</h3>
                             <div class="card-tools" style="display: flex">
-                                    <div class="input-group input-group-sm" style="width: 50px;">
-                                            <button onclick="downloadCanvas()" class="btn-sm btn-primary">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                    </div>
+                                <div class="input-group input-group-sm" style="width: 50px;">
+                                    <button onclick="downloadCanvas()" class="btn-sm btn-primary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
                                 <!-- form date picker-->
-                                <form method="POST" id='data'>
+                                <form method="POST">
                                     @csrf
                                     <div class="input-group input-group-sm" style="width: 250px;">
                                         <div class="input-group-prepend">
@@ -62,7 +60,7 @@ $(function () {
             format: 'DD/MM/YYYY'
         }
     })
-    $('#datepicker').val("");
+    //$('#datepicker').val("");
 })
 
 @foreach ($data as $key => $ref)
@@ -154,7 +152,7 @@ var lineChart = new Chart(CHART, {
         responsive: true,
         title: {
             display: true,
-            text: '{{ $teamname }}'
+            text: '{{ $title }}'
         },
         scales: {
             xAxes: [{

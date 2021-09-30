@@ -1,7 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', $title." - ".$teamname)
-
 @section('content')
     <section class="content">
         <div class="container-fluid">
@@ -9,10 +7,10 @@
                 <div class="col-md-12">
                     <div class="card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Tabela RAW</h3>
+                            <h3 class="card-title">{{$title}}</h3>
                             <div class="card-tools" style="display: flex">
                                 <!-- form date picker-->
-                                <form method="POST" id='data'>
+                                <form method="POST">
                                     @csrf
                                     <div class="input-group input-group-sm" style="width: 250px;">
                                         <div class="input-group-prepend">
@@ -36,10 +34,10 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10px">#</th>
-                                        <th>Ref</th>
+                                        <th>Referência</th>
                                         <th>Payload</th>
                                         <th>Timestamp</th>
-                                        <th>Date</th>
+                                        <th>Data</th>
                                     </tr>
                                 </thead>
                                 <tbody>

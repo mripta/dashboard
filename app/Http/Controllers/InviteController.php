@@ -23,7 +23,6 @@ class InviteController extends Controller
     /**
      * Display the Invites page.
      *
-     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -48,6 +47,7 @@ class InviteController extends Controller
      * Creates the invite and sends the email notification from the admin dashboard
      * /admin/invite
      *
+     * @param  StoreInviteRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function create(StoreInviteRequest $request)

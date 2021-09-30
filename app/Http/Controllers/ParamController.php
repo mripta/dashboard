@@ -20,7 +20,7 @@ class ParamController extends Controller
     }
 
     /**
-     * Show the form for editing the Params from RefID.
+     * Show the form for edit the Params from RefID.
      * /params/{refid}
      * 
      * @param  int  $refid
@@ -70,7 +70,7 @@ class ParamController extends Controller
         {
             return redirect()->route('pontos.index')->with('error', "Não tem acesso para editar este recurso");
         }
-        
+
         $this->validate($request, [
             'param' => 'required|array',
             'param.*' => 'required|string|distinct|max:30',
@@ -83,13 +83,12 @@ class ParamController extends Controller
         {
             foreach($request->input('deleteparam') as $paramdel)
             {
-
                 $del = Param::where('ref_id', $refid)->where('param', $paramdel)->first();
                 if(!is_null($del))
                     $del->delete();
             }
         }
-        
+
         // if only 1 param, we need to updated it
         if(count($request->input('param')) == 1)
         {

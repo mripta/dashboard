@@ -157,8 +157,8 @@
                                     <th>Nome</th>
                                     <th>Referência</th>
                                     <th>Parâmetro</th>
-                                    <th>Min</th>
-                                    <th>Max</th>
+                                    <th>Valor Min.</th>
+                                    <th>Valor Max.</th>
                                     <th>Ativo</th>
                                     @if(Auth::user()->isOwner($team)) <th>Opções</th> @endif
                                 </tr>
