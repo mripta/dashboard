@@ -1,6 +1,6 @@
 FROM php:7.4-fpm
 
-ENV APP_DEBUG=true
+ENV APP_DEBUG=false
 ENV APP_URL=http://localhost
 
 ENV DB_HOST=database
@@ -49,9 +49,15 @@ COPY .env.example /var/www/.env
 # Define work path
 WORKDIR /var/www
 
-# Generate ENV key
-RUN composer install
+# Install Packages
+RUN composer install --optimize-autoloader --no-dev
+# Generate APP key
 RUN php artisan key:generate
+
+# Install Optimizations
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
 
 # Change current user to www
 USER www
