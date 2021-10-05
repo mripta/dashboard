@@ -65,7 +65,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Tem a certeza que deseja eliminar a equipa selecionada?</p>
+        <p>Tem a certeza que deseja eliminar o ponto de recolha selecionado?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
