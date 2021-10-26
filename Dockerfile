@@ -1,7 +1,7 @@
 FROM php:7.4-fpm
 
-ENV APP_DEBUG=false
-ENV APP_URL=http://localhost
+ARG APP_DEBUG
+ARG APP_URL
 
 ENV DB_HOST=database
 ENV DB_PORT=3306
@@ -15,12 +15,12 @@ ENV MG_DATABASE=aedes
 ENV MG_USERNAME=admin
 ENV MG_PASSWORD=admin
 
-ENV MAIL_HOST=mailhog
-ENV MAIL_PORT=1025
-ENV MAIL_USERNAME=null
-ENV MAIL_PASSWORD=null
-ENV MAIL_ENCRYPTION=null
-ENV MAIL_FROM_ADDRESS=null
+ARG MAIL_HOST
+ARG MAIL_PORT
+ARG MAIL_USERNAME
+ARG MAIL_PASSWORD
+ARG MAIL_ENCRYPTION
+ARG MAIL_FROM_ADDRESS
 
 # Install dependencies
 RUN apt-get update && apt-get install -y libonig-dev libcurl4-openssl-dev pkg-config libssl-dev zip
