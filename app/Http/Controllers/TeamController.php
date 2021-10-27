@@ -82,7 +82,7 @@ class TeamController extends Controller
         $team = Team::findOrFail($teamid);
 
         $this->validate($request, [
-            'name' => 'required|string|max:50',
+            'name' => 'required|string|max:50|unique:teams,name,'.$teamid,
             'description' => 'required|string|max:100',
             'username' => 'required|string|max:10|alpha_dash|unique:teams,username,'.$teamid,
             'users' => 'array'

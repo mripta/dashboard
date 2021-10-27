@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use App\Models\Ref;
 use App\Models\Data;
 use App\Models\Team;
 use App\Models\User;
@@ -135,9 +136,9 @@ class PontoController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:50',
+            'name' => 'unique:teams|required|string|max:50',
             'desc' => 'required|string|max:100',
-            'username' => 'required|string|max:10|unique:teams',
+            'username' => 'unique:teams|required|string|max:10',
             'password' => 'required|string|min:6|confirmed',
             'users' => 'array',
             'refs' => 'array',
@@ -241,7 +242,7 @@ class PontoController extends Controller
         }
 
         $this->validate($request, [
-            'name' => 'required|string|max:50',
+            'name' => 'required|string|max:50|unique:teams,name,'.$team->id,
             'desc' => 'required|string|max:100',
             'username' => 'required|string|max:10|unique:teams,username,'.$team->id,
             'users' => 'array'
