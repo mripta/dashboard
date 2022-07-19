@@ -32,6 +32,7 @@ class DataController extends Controller
      */
     public function table($teamid, Request $request)
     {
+        $hard_limit = 2000;
         // force teamid to int
         $teamid = intval($teamid);
 
@@ -56,18 +57,21 @@ class DataController extends Controller
                 1 => 'required|date_format:d/m/Y'
             ])->validate();
 
-            $data = Data::where('teamid', $teamid)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->get();
+            $total = Data::where('teamid', $teamid)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->count();
+            $data = Data::where('teamid', $teamid)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->skip($total-$hard_limit)->get();
         }
         else
         {
             // get all the data from the team
-            $data = Data::where('teamid', $teamid)->get();
+            $total = Data::where('teamid', $teamid)->count();
+            $data = Data::where('teamid', $teamid)->skip($total-$hard_limit)->get();
         }
 
         $params = [
             'title' => 'Tabela Formatada - '.$team->name,
             'data' => $data,
-            'j' => 1
+            'j' => 1,
+            'hard_limit' => $hard_limit
         ];
 
         return view('dashboard.table', $params);
@@ -83,6 +87,7 @@ class DataController extends Controller
      */
     public function raw($teamid, Request $request)
     {
+        $hard_limit = 20000;
         // force teamid to int
         $teamid = intval($teamid);
 
@@ -107,17 +112,20 @@ class DataController extends Controller
                 1 => 'required|date_format:d/m/Y'
             ])->validate();
 
-            $data = Data::where('teamid', $teamid)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->get();
+            $total = Data::where('teamid', $teamid)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->count();
+            $data = Data::where('teamid', $teamid)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->skip($total-$hard_limit)->get();
         } 
         else 
         {
             // get all the data from the team
-            $data = Data::where('teamid', $teamid)->get();
+            $total = Data::where('teamid', $teamid)->count();
+            $data = Data::where('teamid', $teamid)->skip($total-$hard_limit)->get();
         }
 
         $params = [
             'title' => 'Tabela RAW - '.$team->name,
-            'data' => $data
+            'data' => $data,
+            'hard_limit' => $hard_limit
         ];
 
         return view('dashboard.raw', $params);
@@ -134,6 +142,7 @@ class DataController extends Controller
      */
     public function charts($chart, $teamid, Request $request)
     {
+        $hard_limit = 1000;
         // force teamid to int
         $teamid = intval($teamid);
 
@@ -158,12 +167,15 @@ class DataController extends Controller
                 1 => 'required|date_format:d/m/Y'
             ])->validate();
 
-            $sensors = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->get();
+            $total = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->count();
+
+            $sensors = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->skip($total-$hard_limit)->get();
         } 
         else 
         {
             // get all the data from the team
-            $sensors = Data::where('teamid', $teamid)->get();
+            $total = Data::where('teamid', $teamid)->count();
+            $sensors = Data::where('teamid', $teamid)->skip($total-$hard_limit)->get();
         }
 
         // init arrays
@@ -234,7 +246,8 @@ class DataController extends Controller
             'dataset' => $dataset,
             'chart' => $chart,
             'data' => $data,
-            'j' => 0
+            'j' => 0,
+            'hard_limit' => $hard_limit
         ];
         return view('dashboard.charts', $params);
     }

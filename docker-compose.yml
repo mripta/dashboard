@@ -1,0 +1,78 @@
+version: "3.9"
+services:
+  app:
+    image: dashboard:local
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: app
+      APP_DEBUG: "true"
+      DB_HOST: database
+      MAIL_HOST: smtp.sendgrid.net
+      MAIL_PORT: 465
+      MAIL_USERNAME: apikey
+      MAIL_PASSWORD: <token>
+      MAIL_ENCRYPTION: ssl
+      MAIL_FROM_ADDRESS: mripta@mripta.online
+    volumes:
+      - laravel:/var/www
+    networks:
+      - app-network
+    depends_on:
+      - database
+
+  web:
+    image: nginx:alpine
+#    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+    volumes:
+      - ./app.conf:/etc/nginx/conf.d/default.conf
+      - laravel:/var/www
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  database:
+    image: mysql:5.7
+#    container_name: database
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: database
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+    volumes:
+      - ./laravel.sql:/docker-entrypoint-initdb.d/laravel.sql
+      - dbdata:/var/lib/mysql/
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:latest
+#    container_name: mongo
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: mongo
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: aedes
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+# Docker Volumes
+volumes:
+  laravel:
+    driver: local
+  dbdata:
+    driver: local
+  mongodbdata:
+    driver: local

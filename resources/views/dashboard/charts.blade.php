@@ -5,6 +5,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+                    <div class="alert alert-primary" role="alert">
+                      Results are limited to the last {{$hard_limit}} entries.
+                    </div>
                     <div class="card card-primary card-outline">
                         <div class="card-header">
                             <h3 class="card-title">{{$title}}</h3>
@@ -113,18 +116,33 @@ var colorsBackground = [
     'rgba(215, 181, 166, 0.4)'
 ];
 
+@php
+    $labels_defined = false;
+@endphp
+
 @foreach ($dataset as $key => $ref)
 @foreach ($ref as $param)
-{{-- get the time to the labels on the first iteration --}}
-@if ($loop->parent->first && $loop->first)
-var labels = var{{$key}}.{{$key}}.map(function (e) {
-    return e.time;
-});
-@endif
 
-var {{$key.$param}} = var{{$key}}.{{$key}}.map(function (e) {
-    return e.{{$param}};
-});
+{{-- check if the var is defined, fixes problem with defined refs without data reported --}}
+if (typeof var{{$key}} !== 'undefined' && var{{$key}} !== null) {
+
+{{-- get the time to the labels on the first iteration --}}
+    @if ($labels_defined == false)
+        @isset($data[$key])
+        var labels = var{{$key}}.{{$key}}.map(function (e) {
+        return e.time;
+        });
+        @php
+            $labels_defined = true;
+        @endphp
+        @endisset
+    @endif
+
+    var {{$key.$param}} = var{{$key}}.{{$key}}.map(function (e) {
+        return e.{{$param}};
+    });
+
+}
 @endforeach
 @endforeach
 
