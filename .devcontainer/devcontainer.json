@@ -1,0 +1,29 @@
+// https://aka.ms/devcontainer.json
+{
+	"name": "Laravel Docker Container",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "laravel.test",
+	"workspaceFolder": "/var/www/html",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mikestead.dotenv", //.ENV sintax highlighting
+				"amiralizadeh9480.laravel-extra-intellisense", // better intellisense for laravel projects - https://marketplace.visualstudio.com/items?itemName=amiralizadeh9480.laravel-extra-intellisense
+				// "ryannaddy.laravel-artisan",
+				// "onecentlin.laravel5-snippets", //Laravel snippets for Visual Studio Code - see https://marketplace.visualstudio.com/items?itemName=onecentlin.laravel5-snippets
+				"onecentlin.laravel-blade", // Laravel blade snippets and syntax highlight support for Visual Studio Code. - https://marketplace.visualstudio.com/items?itemName=onecentlin.laravel-blade
+				"xdebug.php-debug"
+			],
+			"settings": {
+				"php.format.codeStyle": "PSR-2"
+			}
+		}
+	},
+	"remoteUser": "sail",
+	"postCreateCommand": "chown -R 1000:1000 /var/www/html"
+	// "forwardPorts": [],
+	// "runServices": [],
+	// "shutdownAction": "none",
+}

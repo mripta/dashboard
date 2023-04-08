@@ -8,18 +8,21 @@ MRIPTA Laravel web application. Uses MySQL db for relational data (users, locati
 docker build -t dashboard:local .
 ```
 
-## Testing it locally
+## Building with GitHub Actions
+A GitHub action is configured on new releases to run tests, build image and push to dockerhub. See `.github/` for details.
 
-Just use the docker-compose with the default config (using the dashboard:local image), alternatively use the one inside the `docker` repo to have the remaining containers also running.
-Note: between builds there is a need to remove the laravel volume in order to update the code... for some reason the files already in the volume are not replaced by the ones in the container... so new code will not work until the `laravel` volume is removed. This will also delete storage (if files are uploaded).
+## Development Environment
+The dev env was reorganized and now uses Laravel Sail. A docker container is build (from Ubuntu 20.04) and the project can be launcher with `sail` CLI ([see docs](https://laravel.com/docs/8.x/sail)). Also, devcontainers were added, so VSCode will automatically launch de containers and the terminal will open inside the container ([see docs](https://code.visualstudio.com/docs/devcontainers/tutorial)) This means `sail` cli is not needed if commands are executed in the VSCode terminal. For details see files:
+* docker/7.4/Dockerfile
+* docker-compose.yml
+* .devcontainer/
+* .vscode/
 
-```bash
-sudo docker-compose up -d
-sudo docker-compose down
-docker volume rm dashboard_laravel
-docker build -t dashboard:local .
-sudo docker-compose up -d
-```
-
-# IMPORTANT TO DO
-The dev environment must be reorganized properly...
+Other important notes:
+* Xdebug not yet working
+* MySQL 8 in use (instead of 5.7 previously - test!)
+* The `.env.example` must be copied to `.env` and edited as needed
+* Initially no app key exists (generate as needed)
+* Migrations might also need to be run (`php artisan migrate`?)
+* Same with seed data (`php artisan db:seed`)
+  * Run `php artisan migrate:fresh --seed` to drop d and run migrations + seeds from the start
