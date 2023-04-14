@@ -18,6 +18,23 @@ The dev env was reorganized and now uses Laravel Sail. A docker container is bui
 * .devcontainer/
 * .vscode/
 
+## Before you launch in VSCode
+Make sure you execute the following commands (in the `dashboard` folder):
+```bash
+docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/var/www/html -w /var/www/html laravelsail/php74-composer:latestcomposer install --ignore-platform-reqs
+
+./vendor/bin/sail build
+```
+
+Now in the project directory you should have a file called `.env.example`. For the next step you must copy this file and rename it to `.env`.  
+**_NOTE:_** The idea is to mantain both files, the `.env` file is a configuration file for your local dev container and the `.env.example` is used to save the configuration file in the git repo.
+After the copy is done execute the last command:
+
+```bash
+./vendor/bin/sail up -d
+```
+Now you should be ready to go! 😎
+
 Other important notes:
 * Xdebug not yet working
 * MySQL 8 in use (instead of 5.7 previously - test!)
