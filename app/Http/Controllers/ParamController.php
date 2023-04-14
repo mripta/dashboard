@@ -73,7 +73,7 @@ class ParamController extends Controller
 
         $this->validate($request, [
             'param' => 'required|array',
-            'param.*' => 'required|string|distinct|max:30',
+            'param.*' => 'required|string|distinct|max:30|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
             'paramname' => 'required|array',
             'paramname.*' => 'required_with:param.*|string|max:50',
         ]);
