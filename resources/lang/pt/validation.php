@@ -98,7 +98,7 @@ return [
     'numeric' => 'O campo ":attribute" deve ser um número.',
     'password' => 'A palavra-passe está incorreta.',
     'present' => 'O campo ":attribute" deve estar presente.',
-    'regex' => 'O campo ":attribute" tem um formato inválido.',
+    'regex' => 'O campo ":attribute" tem um formato inválido ou carateres não permitidos.',
     'required' => 'O campo ":attribute" é obrigatório.',
     'required_if' => 'O campo ":attribute" é obrigatório quando ":other" for ":value".',
     'required_unless' => 'O campo ":attribute" é obrigatório exceto quando ":other" for ":values".',
