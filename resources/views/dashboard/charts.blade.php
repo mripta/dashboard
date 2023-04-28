@@ -161,6 +161,7 @@ var lineChart = new Chart(CHART, {
                 backgroundColor: colorsBackground[{{$j}}],
                 borderColor: colorsBorder[{{$j++}}],
                 data: {{$key.$param}}
+                
             },
         @endforeach
     @endforeach
@@ -194,6 +195,15 @@ var lineChart = new Chart(CHART, {
         }
     }
 })
+
+// Hide all datasets initially
+function hideAllDatasets() {
+    lineChart.data.datasets.forEach(function(ds) {
+        ds.hidden = true;
+    });
+    lineChart.update();
+}
+hideAllDatasets();
 
 // hide dataset on title click
 $("#toggle").click(function() {

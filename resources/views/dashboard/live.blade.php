@@ -222,6 +222,15 @@ function downloadCanvas() {
     tab.document.close();
 }
 
+// Hide all datasets initially
+function hideAllDatasets() {
+    myChart.data.datasets.forEach(function(ds) {
+        ds.hidden = true;
+    });
+    myChart.update();
+}
+hideAllDatasets();
+
 // hide param onclick
 $("#toggle").click(function() {
     chartInstance.data.datasets.forEach(function(ds) {
