@@ -73,11 +73,11 @@ services:
             MONGO_DB: aedes
             MONGO_PUB_COL: publish
             MYSQL_PORT: 3306
-            MYSQL_HOST: "%"
+            MYSQL_HOST: '${DB_HOST}'
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
             MYSQL_DB: '${DB_DATABASE}'
-            DEBUG_LEVEL: silent
+            DEBUG_LEVEL: verbose
         ports:
             - "1883:1883"
         networks:
