@@ -62,6 +62,29 @@ services:
         networks:
             - sail
 
+    broker:
+        image: mripta/broker:latest
+    #    container_name: broker
+        restart: unless-stopped
+        environment:
+            SERVICE_NAME: broker
+            MQTT_PORT: 1883
+            MONGO_URL: mongodb://admin:admin@mongo/
+            MONGO_DB: aedes
+            MONGO_PUB_COL: publish
+            MYSQL_PORT: 3306
+            MYSQL_HOST: "%"
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DB: '${DB_DATABASE}'
+            DEBUG_LEVEL: silent
+        ports:
+            - "1883:1883"
+        networks:
+            - sail
+        depends_on:
+            - mongo
+
 networks:
     sail:
         driver: bridge
