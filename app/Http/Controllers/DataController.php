@@ -140,14 +140,14 @@ class DataController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function charts($chart, $teamid, Request $request)
+    public function charts($chart, $teamid, $refid = null, $paramid = null, Request $request)
     {
         $hard_limit = 1000;
         // force teamid to int
         $teamid = intval($teamid);
 
         // get the team
-        $team = Team::findOrFail($teamid);
+        $team = Team::with('refs')->findOrFail($teamid);
 
         // check if the user belongs to the team
         if (!Auth::user()->isMember($team))
@@ -158,20 +158,9 @@ class DataController extends Controller
         // if $request is POST
         if($request->method() == "POST")
         {
-            $date = trim($request->datepicker);
-            $date = explode(" - ", $date);
-
-            // validate date values
-            Validator::make($date, [
-                0 => 'required|date_format:d/m/Y',
-                1 => 'required|date_format:d/m/Y'
-            ])->validate();
-
-            $total = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->count();
-
-            $sensors = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->skip($total-$hard_limit)->get();
+            $sensors = $this->handleChartPostRequests($hard_limit, $request, $refid, $teamid);
         } 
-        else 
+        else // it's a GET
         {
             // get all the data from the team
             $total = Data::where('teamid', $teamid)->count();
@@ -224,9 +213,14 @@ class DataController extends Controller
         }
 
         // create dataset var -> array of refs and params
-        // Get the refs of the team
-        $refs = Ref::where('team_id', $teamid)->get(['id','ref']);
-
+        // Get the refs of the team   
+        if (is_null ($refid)){  // not filtred through refs 
+            $refs = Ref::where('team_id', $teamid)->get(['id','ref']);
+        }
+        else {  // filtred through refs
+            $refs = Ref::where('team_id', $teamid)->where('id', $refid)->get(['id','ref']);
+        }
+        
         // iterate all refs from the team
         foreach ($refs as $ref)
         {
@@ -244,12 +238,48 @@ class DataController extends Controller
         $params = [
             'title' => 'Gráficos - '.$team->name,
             'dataset' => $dataset,
+            'refid' => $refid,
+            'paramid' => $paramid,
+            'teamid' => $teamid,
+            'refs' => $team->refs,
             'chart' => $chart,
             'data' => $data,
             'j' => 0,
             'hard_limit' => $hard_limit
         ];
         return view('dashboard.charts', $params);
+    }
+
+    public function handleChartPostRequests($hard_limit, $request, $refid, $teamid)
+    {
+            $date = trim($request->datepicker);
+            $date = explode(" - ", $date);
+
+            // validate date values
+            Validator::make($date, [
+                0 => 'required|date_format:d/m/Y',
+                1 => 'required|date_format:d/m/Y'
+            ])->validate();
+
+            if (!is_null($refid)) 
+            {
+                $refid = intval($refid);
+
+                // get the ref
+                $ref = Ref::findOrFail($refid);
+
+                $total = Data::where('teamid', $teamid)->where('ref', $ref->ref)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->count();
+
+                $sensors = Data::where('teamid', $teamid)->where('ref', $ref->ref)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->skip($total-$hard_limit)->get();
+            
+            } 
+            else 
+            {
+                $total = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->count();
+
+                $sensors = Data::where('teamid', $teamid)->whereDate('date', '<=', trim($date[1]))->whereDate('date', '>=', trim($date[0]))->skip($total-$hard_limit)->get(); 
+            }
+            return $sensors;
     }
 
     /**

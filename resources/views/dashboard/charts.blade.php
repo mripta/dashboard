@@ -8,6 +8,9 @@
                     <div class="alert alert-primary" role="alert">
                       Results are limited to the last {{$hard_limit}} entries.
                     </div>
+                    @php // TODO: this is for debug clear plz
+                        #dd($data);
+                    @endphp
                     <div class="card card-primary card-outline">
                         <div class="card-header">
                             <h3 class="card-title">{{$title}}</h3>
@@ -18,20 +21,29 @@
                                     </button>
                                 </div>
                                 <!-- form date picker-->
-                                <form method="POST">
+                                <form action="{{route('chartPost', ['chart'=>$chart, 'teamid'=>$teamid])}}" method="POST" class="form-inline">
                                     @csrf
-                                    <div class="input-group input-group-sm" style="width: 250px;">
+                                    <div class="form-group input-group-sm" style="margin-left:10px">
+                                        Referência
+                                        <select class="form-control" style="margin-left:3px" id="ref" name="refid" onclick="document.getElementById('paramlist').value=0">
+                                        <option value="0">Todas</option>
+                                        @foreach($refs as $ref)
+                                            <option value="{{$ref->id}}" @if($ref->id == $refid) selected @endif>{{$ref->name}}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="input-group input-group-sm" style="width: 250px; margin-left:10px;">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <i class="far fa-calendar-alt"></i>
                                             </span>
                                         </div>
                                         <input type="text" name="datepicker" class="form-control float-right" id="datepicker">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
+                                    </div>
+                                    <div class="input-group-append" style="margin-left:10px">
+                                        <button type="submit" class="btn btn-default btn-sm">
+                                            <i class="fas fa-search"></i>
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -121,6 +133,7 @@ var colorsBackground = [
 @endphp
 
 @foreach ($dataset as $key => $ref)
+{{-- console.log({{ $key }}); TODO: remove this--}}
 @foreach ($ref as $param)
 
 {{-- check if the var is defined, fixes problem with defined refs without data reported --}}

@@ -90,11 +90,11 @@ Route::post('/charts/live/{teamid}/{refid?}/{paramid?}',[DataController::class, 
 Route::post('/charts/genroute',[DataController::class, 'genRoute'])->name('genroute');
 
 // general charts
-Route::get('/charts/{chart}/{teamid}',[DataController::class, 'charts'])->name('charts')
-        ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+']);
+Route::get('/charts/{chart}/{teamid}/{refid?}/{paramid?}',[DataController::class, 'charts'])->name('charts')
+        ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+', 'refid' => '[0-9]+', 'paramid' => '[0-9]+']);
 // charts post to define the date picker
-Route::post('/charts/{chart}/{teamid}',[DataController::class, 'charts'])
-        ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+']);
+Route::post('/charts/{chart}/{teamid}',[DataController::class, 'charts'])->name('chartPost')
+        ->where(['chart' => '[a-z]+', 'teamid' => '[0-9]+', 'refid' => '[0-9]+', 'paramid' => '[0-9]+']);
 
 // ============================== TABLES ==============================
 // raw table
