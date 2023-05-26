@@ -10,8 +10,8 @@ services:
                 XDEBUG: '${XDEBUG}'
                 XDEBUG_PORT: '${XDEBUG_PORT}'
         image: sail-7.4/app
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
+        #extra_hosts:
+          #  - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'

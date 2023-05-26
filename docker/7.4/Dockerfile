@@ -51,7 +51,8 @@ RUN pecl channel-update pecl.php.net
 RUN pecl install mongodb
 # Install xdebug according to the Docker image you're using
 RUN pecl install xdebug-3.1.6
-COPY xdebug.ini  $PHP_INI_DIR/conf.d/
+# COPY xdebug.ini  $PHP_INI_DIR/conf.d/
+COPY xdebug.ini  /etc/php/7.4/cli/conf.d/50_xdebug.ini
 
 # Install extensions (used with php docker images, docker-php-ext-install available there)
 # mbstring installed above, pdo_mysql is part of pgsql also above
