@@ -51,7 +51,7 @@
                                         <td>{{ $line->ref }}</td>
                                         <td>{{ $line->payload }}</td>
                                         <td>{{ $line->timestamp }}</td>
-                                        <td>{{ date('d/m/Y H:i:s', $line->timestamp) }}</td>
+                                        <td>{{ date('Y/m/d H:i:s', $line->timestamp) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -73,7 +73,8 @@ $(document).ready(function() {
         ],
         language: {
             url: '../js/pt_PT.json'
-        }
+        },
+        "order": [[4, "desc"]] // Sort by the fifth column (index 4) in descending order
     });
 
     //Date range picker
