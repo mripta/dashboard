@@ -19,6 +19,21 @@ class RefController extends Controller
         $this->middleware('auth');
     }
 
+    public function listRefs()
+    {
+        return Ref::all();
+    }
+
+    public function listRefsInTeam($teamId)
+    {
+        return Ref::where('team_id', $teamId)->get();
+    }
+
+    public function singleRef($id)
+    {
+        return Ref::find($id);    
+    }
+
     /**
      * Show the form for creating a new Ref.
      * /ref/create/{teamid}

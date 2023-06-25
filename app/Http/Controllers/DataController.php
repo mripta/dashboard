@@ -22,6 +22,15 @@ class DataController extends Controller
         $this->middleware('auth');
     }
 
+    public function listData($id)
+    {
+        $hard_limit = 10;
+        $date = array("19/12/2022", "02/05/2023");
+
+        #return Data::where('teamid', $id)->whereDate('date', '<=', $date[1])->whereDate('date', '>=', $date[0])->get();
+        return Data::all();
+    }
+
     /**
      * Display the formated table data page.
      * /table/{teamid}

@@ -19,6 +19,21 @@ class ParamController extends Controller
         $this->middleware('auth');
     }
 
+    public function listParams()
+    {
+        return Param::all();
+    }
+
+    public function listParamsInRef($refId)
+    {
+        return Param::where('ref_id', $refId)->get();
+    }
+
+    public function singleParam($id)
+    {
+        return Param::find($id);    
+    }
+
     /**
      * Show the form for edit the Params from RefID.
      * /params/{refid}
