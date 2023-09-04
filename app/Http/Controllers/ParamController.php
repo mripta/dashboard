@@ -19,16 +19,19 @@ class ParamController extends Controller
         $this->middleware('auth');
     }
 
+    // API
     public function listParams()
     {
         return Param::all();
     }
 
+    // API
     public function listParamsInRef($refId)
     {
         return Param::where('ref_id', $refId)->get();
     }
 
+    // API
     public function singleParam($id)
     {
         return Param::find($id);    

@@ -23,36 +23,49 @@ use App\Http\Controllers\DataController;
 
 Route::prefix('EcoModZHC')->group(function () {
     // Ref
+    // Ex.: http://localhost:80/api/EcoModZHC/ref
     Route::get(
         'ref',
         'App\Http\Controllers\RefController@listRefs'
     )->withoutMiddleware('auth');
+    // Ex.: http://localhost:80/api/EcoModZHC/ref/team/1
     Route::get(
         'ref/team/{teamId}',
         'App\Http\Controllers\RefController@listRefsInTeam'
     )->withoutMiddleware('auth');
+    // Ex.: http://localhost:80/api/EcoModZHC/ref/1
     Route::get(
         'ref/{id}',
         'App\Http\Controllers\RefController@singleRef'
     )->withoutMiddleware('auth');
 
     // Param
+    // Ex.: http://localhost:80/api/EcoModZHC/param
     Route::get(
         'param',
         'App\Http\Controllers\ParamController@listParams'
     )->withoutMiddleware('auth');
+    // Ex.: http://localhost:80/api/EcoModZHC/param/ref/1
     Route::get(
         'param/ref/{refId}',
         'App\Http\Controllers\ParamController@listParamsInRef'
     )->withoutMiddleware('auth');
+    // Ex.: http://localhost:80/api/EcoModZHC/param/1
     Route::get(
         'param/{id}',
         'App\Http\Controllers\ParamController@singleParam'
     )->withoutMiddleware('auth');
 
     // Data
+    // Ex.: http://localhost:80/api/EcoModZHC/data/1
     Route::get(
         'data/{id}',
         'App\Http\Controllers\DataController@listData'
+    )->withoutMiddleware('auth');
+
+    // Ex.: http://localhost:80/api/EcoModZHC/data/1/ref/optod
+    Route::get(
+        'data/{id}/ref/{ref}',
+        'App\Http\Controllers\DataController@listDataGivenRef'
     )->withoutMiddleware('auth');
 });
