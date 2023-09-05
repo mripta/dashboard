@@ -19,6 +19,24 @@ class ParamController extends Controller
         $this->middleware('auth');
     }
 
+    // API
+    public function listParams()
+    {
+        return Param::all();
+    }
+
+    // API
+    public function listParamsInRef($refId)
+    {
+        return Param::where('ref_id', $refId)->get();
+    }
+
+    // API
+    public function singleParam($id)
+    {
+        return Param::find($id);    
+    }
+
     /**
      * Show the form for edit the Params from RefID.
      * /params/{refid}
@@ -73,7 +91,7 @@ class ParamController extends Controller
 
         $this->validate($request, [
             'param' => 'required|array',
-            'param.*' => 'required|string|distinct|max:30',
+            'param.*' => 'required|string|distinct|max:30|regex:/^[a-zA-Z][a-zA-Z0-9]*$/',
             'paramname' => 'required|array',
             'paramname.*' => 'required_with:param.*|string|max:50',
         ]);

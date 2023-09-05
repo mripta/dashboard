@@ -19,6 +19,24 @@ class RefController extends Controller
         $this->middleware('auth');
     }
 
+    // API
+    public function listRefs()
+    {
+        return Ref::all();
+    }
+
+    // API
+    public function listRefsInTeam($teamId)
+    {
+        return Ref::where('team_id', $teamId)->get();
+    }
+
+    // API
+    public function singleRef($id)
+    {
+        return Ref::find($id);    
+    }
+
     /**
      * Show the form for creating a new Ref.
      * /ref/create/{teamid}
@@ -67,7 +85,7 @@ class RefController extends Controller
         }
 
         $this->validate($request, [
-            'ref' => 'required|string|max:50|unique:refs,ref,NULL,id,team_id,'.$team->id,
+            'ref' => 'required|string|max:50|regex:/^[a-zA-Z][a-zA-Z0-9]*$/|unique:refs,ref,NULL,id,team_id,'.$team->id,
             'name' => 'required|string|max:100',
         ]);
 
