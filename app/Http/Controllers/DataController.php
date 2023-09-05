@@ -22,6 +22,25 @@ class DataController extends Controller
         $this->middleware('auth');
     }
 
+    // API
+    public function listData(int $id)
+    {
+        return Data::where('teamid', $id)
+            ->orderBy('timestamp', 'desc')
+            ->take(5)
+            ->get();
+    }
+
+    // API
+    public function listDataGivenRef(int $id, string $ref)
+    {
+        return Data::where('teamid', $id)
+            ->where('ref', $ref)
+            ->orderBy('timestamp', 'desc')
+            ->take(5)
+            ->get();
+    }
+
     /**
      * Display the formated table data page.
      * /table/{teamid}
