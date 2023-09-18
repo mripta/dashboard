@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Checkout Dashboard Project
         uses: actions/checkout@v2
+      - name: Update App Version
+        run: |
+          chmod +x update_version.sh
+          ./update_version.sh ${{ github.event.release.tag_name }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
