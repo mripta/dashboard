@@ -21,7 +21,7 @@ The dev env was reorganized and now uses Laravel Sail. A docker container is bui
 ## Before you launch in VSCode
 Make sure you execute the following commands (in the `dashboard` folder):
 ```bash
-docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/var/www/html -w /var/www/html laravelsail/php74-composer:latestcomposer install --ignore-platform-reqs
+docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/var/www/html -w /var/www/html laravelsail/php74-composer:latest composer install --ignore-platform-reqs
 
 ./vendor/bin/sail build
 ```
